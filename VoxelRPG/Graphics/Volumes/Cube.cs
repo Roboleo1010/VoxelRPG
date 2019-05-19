@@ -17,14 +17,14 @@ namespace VoxelRPG.Graphics.Volumes
         public override Vector3[] GetVertices()
         {
             return new Vector3[] {
-                new Vector3(-0.5f, -0.5f, -0.5f),
-                new Vector3(0.5f, -0.5f, -0.5f),
-                new Vector3(0.5f, 0.5f, -0.5f),
-                new Vector3(-0.5f, 0.5f, -0.5f),
-                new Vector3(-0.5f, -0.5f, 0.5f),
-                new Vector3(0.5f, -0.5f, 0.5f),
-                new Vector3(0.5f, 0.5f, 0.5f),
-                new Vector3(-0.5f, 0.5f, 0.5f),
+                new Vector3(0f, 0f, 0f),
+                new Vector3(1f, 0f, 0f),
+                new Vector3(1f, 1f, 0f),
+                new Vector3(0f, 1f, 0f),
+                new Vector3(0f, 0f, 1f),
+                new Vector3(1f, 0f, 1f),
+                new Vector3(1f, 1f, 1f),
+                new Vector3(0f, 1f, 1f),
             };
         }
 

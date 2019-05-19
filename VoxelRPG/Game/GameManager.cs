@@ -1,7 +1,17 @@
-﻿namespace VoxelRPG.Game
+﻿using VoxelRPG.Game.GameWorld;
+
+namespace VoxelRPG.Game
 {
-    public static class GameManager
+    public class GameManager
     {
-        public static double Time = 0;
+        public World world;
+
+        public double Time = 0;
+
+
+        public GameManager()
+        {
+            world = new World();
+        }
     }
 }

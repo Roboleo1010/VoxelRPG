@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using OpenTK;
+﻿using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using VoxelRPG.Game;
+using VoxelRPG.Game.Generation;
 using VoxelRPG.Graphics.Shaders;
 using VoxelRPG.Graphics.Volumes;
 using VoxelRPG.Input;
+using VoxelRPG.Utilitys;
 
 namespace VoxelRPG.Graphics
 {
@@ -18,6 +20,7 @@ namespace VoxelRPG.Graphics
         //References
         InputManager inputManager;
         Camera camera = new Camera();
+        GameManager gameManager = new GameManager();
 
         //Shader
         Dictionary<string, ShaderProgram> shaders = new Dictionary<string, ShaderProgram>();
@@ -47,10 +50,8 @@ namespace VoxelRPG.Graphics
         {
             base.OnUpdateFrame(e);
 
-            GameManager.Time += (float)e.Time;
+            gameManager.Time += (float)e.Time;
             inputManager.ProcessInput(Focused);
-
-            Title = RenderFrequency + "fps";
 
             //Get Volume data
             List<Vector3> vertices = new List<Vector3>();
@@ -69,6 +70,8 @@ namespace VoxelRPG.Graphics
             vertexData = vertices.ToArray();
             indiceData = indices.ToArray();
             colorData = colors.ToArray();
+
+            Title = "Vertex count: " + vertices.Count + " - " + RenderFrequency + "fps";
 
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ibo_elements);
             GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indiceData.Length * sizeof(int)), indiceData, BufferUsageHint.StaticDraw);
@@ -145,20 +148,14 @@ namespace VoxelRPG.Graphics
             inputManager = new InputManager(this, camera);
             CursorVisible = false;
 
-            //TODO: Move
-            Random rand = new Random();
-            for (int i = 0; i < 32; i++)
-                for (int j = 0; j < 32; j++)
-                {
-                    if (i == 0 && j % 2 == 0)
-                        continue;
-
-                    Cube c = new Cube(new Vector3((float)rand.NextDouble(), (float)rand.NextDouble(), (float)rand.NextDouble()))
+            for (int x = 0; x < Constants.World.Chunk.Size; x++)
+                for (int z = 0; z < Constants.World.Chunk.Size; z++)
+                    volumes.Add(new Cube(new Vector3(0, 1, 0))
                     {
-                        Position = new Vector3(i, 0, j)
-                    };
-                    volumes.Add(c);
-                }
+                        Position = new Vector3(x, x, z)
+                    });
+
+            gameManager.world.GenerateChunkAt(new Vector2Int(0, 0));
         }
 
         void InitGraphics()
