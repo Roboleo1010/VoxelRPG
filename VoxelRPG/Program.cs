@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using VoxelRPG.Graphics;
 
 namespace VoxelRPG
 {
@@ -10,6 +6,10 @@ namespace VoxelRPG
     {
         static void Main(string[] args)
         {
+            using (Window window = new Window())
+            {
+                window.Run(60, 60);
+            }
         }
     }
 }
