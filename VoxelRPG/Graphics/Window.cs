@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using VoxelRPG.Game;
-using VoxelRPG.Game.Generation;
 using VoxelRPG.Graphics.Shaders;
 using VoxelRPG.Graphics.Volumes;
 using VoxelRPG.Input;
@@ -20,7 +19,7 @@ namespace VoxelRPG.Graphics
         //References
         InputManager inputManager;
         Camera camera = new Camera();
-        GameManager gameManager = new GameManager();
+        GameManager gameManager;
 
         //Shader
         Dictionary<string, ShaderProgram> shaders = new Dictionary<string, ShaderProgram>();
@@ -33,7 +32,8 @@ namespace VoxelRPG.Graphics
         Vector3[] vertexData;
         Vector3[] colorData;
         int[] indiceData;
-        List<Volume> volumes = new List<Volume>();
+
+        public List<Volume> volumes = new List<Volume>();
 
         public Window() : base(1024, 724, new GraphicsMode(32, 24, 0, 4))
         { }
@@ -71,7 +71,7 @@ namespace VoxelRPG.Graphics
             indiceData = indices.ToArray();
             colorData = colors.ToArray();
 
-            Title = "Vertex count: " + vertices.Count + " - " + RenderFrequency + "fps";
+            Title = "Vertex/Color count: " + vertices.Count + "/" + colors.Count + " - " + indices.Count + " - " + RenderFrequency + "fps";
 
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ibo_elements);
             GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indiceData.Length * sizeof(int)), indiceData, BufferUsageHint.StaticDraw);
@@ -145,22 +145,15 @@ namespace VoxelRPG.Graphics
 
         void InitGame()
         {
+            gameManager = new GameManager(this);
             inputManager = new InputManager(this, camera);
             CursorVisible = false;
-
-            for (int x = 0; x < Constants.World.Chunk.Size; x++)
-                for (int z = 0; z < Constants.World.Chunk.Size; z++)
-                    volumes.Add(new Cube(new Vector3(0, 1, 0))
-                    {
-                        Position = new Vector3(x, x, z)
-                    });
 
             gameManager.world.GenerateChunkAt(new Vector2Int(0, 0));
         }
 
         void InitGraphics()
         {
-            Title = "Voxel RPG";
             GL.ClearColor(Color.CornflowerBlue); //BG Color
             GL.PointSize(5);
 

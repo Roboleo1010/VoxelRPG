@@ -5,6 +5,7 @@ namespace VoxelRPG.Graphics.Volumes
     public class Cube : Volume
     {
         Vector3 Color = new Vector3(1, 1, 1);
+        Vector3[] vertices = new Vector3[8];
 
         public Cube(Vector3 color)
         {
@@ -12,11 +13,8 @@ namespace VoxelRPG.Graphics.Volumes
             IndiceCount = 36;
             ColorDataCount = 8;
             Color = color;
-        }
 
-        public override Vector3[] GetVertices()
-        {
-            return new Vector3[] {
+            vertices = new Vector3[] {
                 new Vector3(0f, 0f, 0f),
                 new Vector3(1f, 0f, 0f),
                 new Vector3(1f, 1f, 0f),
@@ -26,6 +24,12 @@ namespace VoxelRPG.Graphics.Volumes
                 new Vector3(1f, 1f, 1f),
                 new Vector3(0f, 1f, 1f),
             };
+
+        }
+
+        public override Vector3[] GetVertices()
+        {
+            return vertices;
         }
 
         public override int[] GetIndices(int offset = 0)
@@ -61,19 +65,21 @@ namespace VoxelRPG.Graphics.Volumes
         public override Vector3[] GetColors()
         {
             return new Vector3[] {
-                Color,
-                Color,
-                Color,
-                Color,
-                Color,
-                Color,
-                Color,
-                Color
+                new Vector3(1, 0, 1),
+                new Vector3(0.5f, 0, 1),
+                new Vector3(1, 0.5f, 1),
+                new Vector3(1, 0, 0.5f),
+                new Vector3(0, 0, 1),
+                new Vector3(0, 1, 0),
+                new Vector3(0, 1, 0.5f),
+                new Vector3(1, 1, 1),
             };
         }
 
         public override void CalculateModelMatrix()
         {
+            ModelMatrix = Matrix4.Identity;
+
             ModelMatrix = Matrix4.CreateScale(Scale) * Matrix4.CreateRotationX(Rotation.X) * Matrix4.CreateRotationY(Rotation.Y) *
                           Matrix4.CreateRotationZ(Rotation.Z) * Matrix4.CreateTranslation(Position);
         }

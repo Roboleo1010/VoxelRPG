@@ -103,6 +103,7 @@
     <Compile Include="Graphics\Shaders\AttributeInfo.cs" />
     <Compile Include="Graphics\Shaders\ShaderProgram.cs" />
     <Compile Include="Graphics\Shaders\UniformInfo.cs" />
+    <Compile Include="Graphics\Volumes\AdaptiveCube.cs" />
     <Compile Include="Graphics\Volumes\Cube.cs" />
     <Compile Include="Graphics\Volumes\Volume.cs" />
     <Compile Include="Input\InputManager.cs" />

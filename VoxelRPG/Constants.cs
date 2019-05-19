@@ -1,9 +1,13 @@
-﻿using VoxelRPG.Utilitys;
+﻿using VoxelRPG.Game;
+using VoxelRPG.Utilitys;
 
 namespace VoxelRPG
 {
     public static class Constants
     {
+        public static GameManager gameManager;
+
+
         public static class Camera
         {
             public static readonly float FarClippingPane = 200;
@@ -14,8 +18,8 @@ namespace VoxelRPG
         {
             public static class Chunk
             {
-                public static readonly int Size = 32;
-                public static readonly int Height = 128;
+                public static readonly int Size = 8;
+                public static readonly int Height = 16;
             }
         }
     }
