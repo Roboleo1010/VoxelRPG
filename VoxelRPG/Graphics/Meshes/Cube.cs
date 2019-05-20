@@ -1,8 +1,8 @@
 ﻿using OpenTK;
 
-namespace VoxelRPG.Graphics.Volumes
+namespace VoxelRPG.Graphics.Meshes
 {
-    public class Cube : Volume
+    public class Cube : Mesh
     {
         Vector3 Color = new Vector3(1, 1, 1);
         Vector3[] vertices = new Vector3[8];

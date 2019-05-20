@@ -103,9 +103,10 @@
     <Compile Include="Graphics\Shaders\AttributeInfo.cs" />
     <Compile Include="Graphics\Shaders\ShaderProgram.cs" />
     <Compile Include="Graphics\Shaders\UniformInfo.cs" />
-    <Compile Include="Graphics\Volumes\AdaptiveCube.cs" />
-    <Compile Include="Graphics\Volumes\Cube.cs" />
-    <Compile Include="Graphics\Volumes\Volume.cs" />
+    <Compile Include="Graphics\Meshes\AdaptiveCube.cs" />
+    <Compile Include="Graphics\Meshes\Cube.cs" />
+    <Compile Include="Graphics\Meshes\Mesh.cs" />
+    <Compile Include="Graphics\Meshes\MeshCollection.cs" />
     <Compile Include="Input\InputManager.cs" />
     <Compile Include="Libs\FastNoise.cs" />
     <Compile Include="Program.cs" />

@@ -1,8 +1,8 @@
 ﻿using OpenTK;
 
-namespace VoxelRPG.Graphics.Volumes
+namespace VoxelRPG.Graphics.Meshes
 {
-    public abstract class Volume
+    public abstract class Mesh
     {
         public Vector3 Position = Vector3.Zero;
         public Vector3 Rotation = Vector3.Zero;

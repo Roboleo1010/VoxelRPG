@@ -4,11 +4,12 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using VoxelRPG.Game;
 using VoxelRPG.Graphics.Shaders;
-using VoxelRPG.Graphics.Volumes;
+using VoxelRPG.Graphics.Meshes;
 using VoxelRPG.Input;
 using VoxelRPG.Utilitys;
 
@@ -33,7 +34,7 @@ namespace VoxelRPG.Graphics
         Vector3[] colorData;
         int[] indiceData;
 
-        public List<Volume> volumes = new List<Volume>();
+        public List<Mesh> meshes = new List<Mesh>();
 
         public Window() : base(1024, 724, new GraphicsMode(32, 24, 0, 4))
         { }
@@ -53,13 +54,13 @@ namespace VoxelRPG.Graphics
             gameManager.Time += (float)e.Time;
             inputManager.ProcessInput(Focused);
 
-            //Get Volume data
+            //Get Mesh data
             List<Vector3> vertices = new List<Vector3>();
             List<int> indices = new List<int>();
             List<Vector3> colors = new List<Vector3>();
             int vertcount = 0;
 
-            foreach (Volume v in volumes)
+            foreach (Meshes.Mesh v in meshes)
             {
                 vertices.AddRange(v.GetVertices().ToList());
                 indices.AddRange(v.GetIndices(vertcount).ToList());
@@ -71,7 +72,7 @@ namespace VoxelRPG.Graphics
             indiceData = indices.ToArray();
             colorData = colors.ToArray();
 
-            Title = "Vertex/Color count: " + vertices.Count + "/" + colors.Count + " - " + indices.Count + " - " + RenderFrequency + "fps";
+            Title = string.Format("Vertex count: {0}  -  Trinagle count: {1}  -  FPS: {2}FPS", vertices.Count, indices.Count / 3, RenderFrequency);
 
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ibo_elements);
             GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indiceData.Length * sizeof(int)), indiceData, BufferUsageHint.StaticDraw);
@@ -87,7 +88,7 @@ namespace VoxelRPG.Graphics
                 GL.VertexAttribPointer(shaders[activeShader].GetAttribute("vColor"), 3, VertexAttribPointerType.Float, true, 0, 0);
             }
 
-            foreach (Volume v in volumes)
+            foreach (Mesh v in meshes) //100ms
             {
                 v.CalculateModelMatrix();
                 v.ViewProjectionMatrix = camera.GetViewMatrix() * Matrix4.CreatePerspectiveFieldOfView(1.3f, ClientSize.Width / (float)ClientSize.Height,
@@ -109,10 +110,10 @@ namespace VoxelRPG.Graphics
 
             shaders[activeShader].EnableVertexAttribArrays();
 
-            //Renders Volumes individually
+            //Renders Meshes individually
             int indiceAt = 0;
 
-            foreach (Volume v in volumes)
+            foreach (Mesh v in meshes)
             {
                 GL.UniformMatrix4(shaders[activeShader].GetUniform("modelview"), false, ref v.ModelViewProjectionMatrix);
                 GL.DrawElements(BeginMode.Triangles, v.IndiceCount, DrawElementsType.UnsignedInt, indiceAt * sizeof(uint));
