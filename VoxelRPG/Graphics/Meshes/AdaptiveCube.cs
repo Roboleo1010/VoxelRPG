@@ -10,11 +10,11 @@ namespace VoxelRPG.Graphics.Meshes
         List<Vector3> colors = new List<Vector3>();
         List<int> indices = new List<int>();
 
-        public AdaptiveCube(Vector3 color, Vector3Int pos, bool hasFrontNeighbour, bool hasBackNeighbour, bool hasLeftNeighbour,
-                                                           bool hasRightNeighbour, bool hasTopNeighbour, bool hasBottomNeighbour)
+        public AdaptiveCube(Vector3 color, Vector3Int pos, bool renderFront, bool renderBack, bool renderLeft,
+                                                           bool renderRight, bool renderTop, bool renderBottom)
         {
-            GetMeshData(color, pos, hasFrontNeighbour, hasBackNeighbour, hasLeftNeighbour,
-                        hasRightNeighbour, hasTopNeighbour, hasBottomNeighbour);
+            GetMeshData(color, pos, renderFront, renderBack, renderLeft,
+                                    renderRight, renderTop, renderBottom);
         }
 
         public override Vector3[] GetVertices()
@@ -46,11 +46,11 @@ namespace VoxelRPG.Graphics.Meshes
             //              Matrix4.CreateRotationZ(Rotation.Z) * Matrix4.CreateTranslation(Position);
         }
 
-        private void GetMeshData(Vector3 color, Vector3Int pos, bool hasFrontNeighbour, bool hasBackNeighbour, bool hasLeftNeighbour,
-                                                                bool hasRightNeighbour, bool hasTopNeighbour, bool hasBottomNeighbour)
+        private void GetMeshData(Vector3 color, Vector3Int pos, bool renderFront, bool renderback, bool renderLeft,
+                                                                bool renderRight, bool renderTop, bool renderBottom)
         {
-            if (hasFrontNeighbour == false || hasBackNeighbour == false || hasLeftNeighbour == false ||
-                hasRightNeighbour == false || hasTopNeighbour == false || hasBottomNeighbour == false)
+            if (renderFront == true || renderback == true || renderLeft == true ||
+                renderRight == true || renderTop == true || renderBottom == true)
             {
                 vertices.Add(new Vector3(0f + pos.X, 0f + pos.Y, 0f + pos.Z));
                 vertices.Add(new Vector3(1f + pos.X, 0f + pos.Y, 0f + pos.Z));
@@ -68,19 +68,19 @@ namespace VoxelRPG.Graphics.Meshes
             for (int i = 0; i < VertexCount; i++)
                 colors.Add(color);
 
-            ColorDataCount = colors.Count;
+            ColorCount = colors.Count;
 
-            if (!hasFrontNeighbour)
+            if (renderFront)
                 indices.AddRange(new int[] { 0, 7, 3, 0, 4, 7 }); //front
-            if (!hasBackNeighbour)
+            if (renderback)
                 indices.AddRange(new int[] { 1, 2, 6, 6, 5, 1 }); //back
-            if (!hasLeftNeighbour)
+            if (renderLeft)
                 indices.AddRange(new int[] { 0, 2, 1, 0, 3, 2 });  //left
-            if (!hasRightNeighbour)
+            if (renderRight)
                 indices.AddRange(new int[] { 4, 5, 6, 6, 7, 4 }); //right
-            if (!hasTopNeighbour)
+            if (renderTop)
                 indices.AddRange(new int[] { 2, 3, 6, 6, 3, 7 }); //top
-            if (!hasBottomNeighbour)
+            if (renderBottom)
                 indices.AddRange(new int[] { 0, 1, 5, 0, 5, 4 }); //bottom
 
             IndiceCount = indices.Count;

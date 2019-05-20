@@ -1,5 +1,4 @@
 ﻿using VoxelRPG.Game;
-using VoxelRPG.Utilitys;
 
 namespace VoxelRPG
 {
@@ -18,7 +17,7 @@ namespace VoxelRPG
         {
             public static class Chunk
             {
-                public static readonly int Size = 64;
+                public static readonly int Size = 128;
                 public static readonly int Height = 64;
             }
         }

@@ -60,12 +60,12 @@ namespace VoxelRPG.Graphics
             List<Vector3> colors = new List<Vector3>();
             int vertcount = 0;
 
-            foreach (Meshes.Mesh v in meshes)
+            foreach (Mesh m in meshes)
             {
-                vertices.AddRange(v.GetVertices().ToList());
-                indices.AddRange(v.GetIndices(vertcount).ToList());
-                colors.AddRange(v.GetColors().ToList());
-                vertcount += v.VertexCount;
+                vertices.AddRange(m.GetVertices().ToList());
+                indices.AddRange(m.GetIndices(vertcount).ToList());
+                colors.AddRange(m.GetColors().ToList());
+                vertcount += m.VertexCount;
             }
 
             vertexData = vertices.ToArray();
@@ -88,12 +88,12 @@ namespace VoxelRPG.Graphics
                 GL.VertexAttribPointer(shaders[activeShader].GetAttribute("vColor"), 3, VertexAttribPointerType.Float, true, 0, 0);
             }
 
-            foreach (Mesh v in meshes) //100ms
+            foreach (Mesh m in meshes) //100ms
             {
-                v.CalculateModelMatrix();
-                v.ViewProjectionMatrix = camera.GetViewMatrix() * Matrix4.CreatePerspectiveFieldOfView(1.3f, ClientSize.Width / (float)ClientSize.Height,
+                m.CalculateModelMatrix();
+                m.ViewProjectionMatrix = camera.GetViewMatrix() * Matrix4.CreatePerspectiveFieldOfView(1.3f, ClientSize.Width / (float)ClientSize.Height,
                                          Constants.Camera.NearClippingPane, Constants.Camera.FarClippingPane);
-                v.ModelViewProjectionMatrix = v.ModelMatrix * v.ViewProjectionMatrix;
+                m.ModelViewProjectionMatrix = m.ModelMatrix * m.ViewProjectionMatrix;
             }
 
             GL.UseProgram(shaders[activeShader].ProgramID);
@@ -113,12 +113,12 @@ namespace VoxelRPG.Graphics
             //Renders Meshes individually
             int indiceAt = 0;
 
-            foreach (Mesh v in meshes)
+            foreach (Mesh m in meshes)
             {
-                GL.UniformMatrix4(shaders[activeShader].GetUniform("modelview"), false, ref v.ModelViewProjectionMatrix);
-                GL.DrawElements(BeginMode.Triangles, v.IndiceCount, DrawElementsType.UnsignedInt, indiceAt * sizeof(uint));
+                GL.UniformMatrix4(shaders[activeShader].GetUniform("modelview"), false, ref m.ModelViewProjectionMatrix);
+                GL.DrawElements(BeginMode.Triangles, m.IndiceCount, DrawElementsType.UnsignedInt, indiceAt * sizeof(uint));
 
-                indiceAt += v.IndiceCount;
+                indiceAt += m.IndiceCount;
             }
 
             shaders[activeShader].DisableVertexAttribArrays();

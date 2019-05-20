@@ -10,7 +10,7 @@ namespace VoxelRPG.Graphics.Meshes
 
         public int VertexCount;
         public int IndiceCount;
-        public int ColorDataCount;
+        public int ColorCount;
         public Matrix4 ModelMatrix = Matrix4.Identity;
         public Matrix4 ViewProjectionMatrix = Matrix4.Identity;
         public Matrix4 ModelViewProjectionMatrix = Matrix4.Identity;

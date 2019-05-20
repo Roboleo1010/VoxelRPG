@@ -11,7 +11,7 @@ namespace VoxelRPG.Graphics.Meshes
         {
             VertexCount = 8;
             IndiceCount = 36;
-            ColorDataCount = 8;
+            ColorCount = 8;
             Color = color;
 
             vertices = new Vector3[] {
