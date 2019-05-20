@@ -4,11 +4,10 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using VoxelRPG.Game;
-using VoxelRPG.Graphics.Shaders;
 using VoxelRPG.Graphics.Meshes;
 using VoxelRPG.Input;
 using VoxelRPG.Utilitys;
@@ -22,16 +21,25 @@ namespace VoxelRPG.Graphics
         Camera camera = new Camera();
         GameManager gameManager;
 
-        //Shader
-        Dictionary<string, ShaderProgram> shaders = new Dictionary<string, ShaderProgram>();
-        readonly string activeShader = "default";
+        //Shader IDs
+        int shaderProgramID;
+        int vertexShaderID;
+        int fragmentShaderID;
 
-        //Buffers
+        //Shader Attributes
+        int attribute_vertexColor;
+        int attribute_vertexPosition;
+        int uniform_modelview;
+
+        //Vertex Buffer Objects
+        int vbo_position;
+        int vbo_color;
         int ibo_elements;
 
         //Data
         Vector3[] vertexData;
         Vector3[] colorData;
+        float[] timeData;
         int[] indiceData;
 
         public List<Mesh> meshes = new List<Mesh>();
@@ -54,12 +62,14 @@ namespace VoxelRPG.Graphics
             gameManager.Time += (float)e.Time;
             inputManager.ProcessInput(Focused);
 
-            //Get Mesh data
+            Title = gameManager.Time + "";
+
             List<Vector3> vertices = new List<Vector3>();
             List<int> indices = new List<int>();
             List<Vector3> colors = new List<Vector3>();
             int vertcount = 0;
 
+            //alle Meshdaten sammeln und vereinigen
             foreach (Mesh m in meshes)
             {
                 vertices.AddRange(m.GetVertices().ToList());
@@ -68,62 +78,67 @@ namespace VoxelRPG.Graphics
                 vertcount += m.VertexCount;
             }
 
+            //Convert Lists to Arrays
             vertexData = vertices.ToArray();
             indiceData = indices.ToArray();
             colorData = colors.ToArray();
 
-            Title = string.Format("Vertex count: {0}  -  Trinagle count: {1}  -  FPS: {2}FPS", vertices.Count, indices.Count / 3, RenderFrequency);
+            //Bind POSITION Buffer
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo_position);  //Preape buffer for writing
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(vertexData.Length * Vector3.SizeInBytes), vertexData, BufferUsageHint.StaticDraw); //Write into buffer
+            GL.VertexAttribPointer(attribute_vertexPosition, 3, VertexAttribPointerType.Float, false, 0, 0); //For which shader attribute
 
+            //Bind COLOR Buffer
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo_color);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(colorData.Length * Vector3.SizeInBytes), colorData, BufferUsageHint.StaticDraw);
+            GL.VertexAttribPointer(attribute_vertexColor, 3, VertexAttribPointerType.Float, true, 0, 0);
+
+            //Bind INDEX Buffer
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ibo_elements);
             GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indiceData.Length * sizeof(int)), indiceData, BufferUsageHint.StaticDraw);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, shaders[activeShader].GetBuffer("vPosition"));
-            GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(vertexData.Length * Vector3.SizeInBytes), vertexData, BufferUsageHint.StaticDraw);
 
-            GL.VertexAttribPointer(shaders[activeShader].GetAttribute("vPosition"), 3, VertexAttribPointerType.Float, false, 0, 0);
-
-            if (shaders[activeShader].GetAttribute("vColor") != -1)
-            {
-                GL.BindBuffer(BufferTarget.ArrayBuffer, shaders[activeShader].GetBuffer("vColor"));
-                GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(colorData.Length * Vector3.SizeInBytes), colorData, BufferUsageHint.StaticDraw);
-                GL.VertexAttribPointer(shaders[activeShader].GetAttribute("vColor"), 3, VertexAttribPointerType.Float, true, 0, 0);
-            }
-
-            foreach (Mesh m in meshes) //100ms
+            //Calculate MODEL MATRIX for each Mesh
+            foreach (Mesh m in meshes)
             {
                 m.CalculateModelMatrix();
-                m.ViewProjectionMatrix = camera.GetViewMatrix() * Matrix4.CreatePerspectiveFieldOfView(1.3f, ClientSize.Width / (float)ClientSize.Height,
-                                         Constants.Camera.NearClippingPane, Constants.Camera.FarClippingPane);
+                m.ViewProjectionMatrix = camera.GetViewMatrix() * Matrix4.CreatePerspectiveFieldOfView(1.3f, ClientSize.Width / (float)ClientSize.Height, 1.0f, 40.0f);
                 m.ModelViewProjectionMatrix = m.ModelMatrix * m.ViewProjectionMatrix;
             }
 
-            GL.UseProgram(shaders[activeShader].ProgramID);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            //Apply Shaders
+            GL.UseProgram(shaderProgramID);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
 
-            GL.Viewport(0, 0, Width, Height);
+            //Empty Buffers
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.Enable(EnableCap.DepthTest);
 
-            shaders[activeShader].EnableVertexAttribArrays();
+            //TODO ??
+            GL.EnableVertexAttribArray(attribute_vertexPosition);
+            GL.EnableVertexAttribArray(attribute_vertexColor);
 
-            //Renders Meshes individually
             int indiceAt = 0;
 
+            //Draw all Meshes individually
             foreach (Mesh m in meshes)
             {
-                GL.UniformMatrix4(shaders[activeShader].GetUniform("modelview"), false, ref m.ModelViewProjectionMatrix);
+                GL.UniformMatrix4(uniform_modelview, false, ref m.ModelViewProjectionMatrix);
                 GL.DrawElements(BeginMode.Triangles, m.IndiceCount, DrawElementsType.UnsignedInt, indiceAt * sizeof(uint));
 
                 indiceAt += m.IndiceCount;
             }
 
-            shaders[activeShader].DisableVertexAttribArrays();
+            //TODO ??
+            GL.DisableVertexAttribArray(attribute_vertexPosition);
+            GL.DisableVertexAttribArray(attribute_vertexColor);
 
+            //Forces asap executionof all pending functions
             GL.Flush();
+
+            //Sets prepared buffer to be the active buffer
             SwapBuffers();
         }
 
@@ -148,6 +163,8 @@ namespace VoxelRPG.Graphics
         {
             gameManager = new GameManager(this);
             inputManager = new InputManager(this, camera);
+
+            //Constrains cursor to Window
             CursorVisible = false;
 
             gameManager.world.GenerateChunkAt(new Vector2Int(0, 0));
@@ -156,12 +173,56 @@ namespace VoxelRPG.Graphics
 
         void InitGraphics()
         {
-            GL.ClearColor(Color.CornflowerBlue); //BG Color
+            //Sets background color
+            GL.ClearColor(Color.CornflowerBlue);
+
+            //Sets size for Points. Only useful if Rendermode = Points
             GL.PointSize(5);
+            //Enables Depthtesting. Responsible for drawing some verts behind others
+            GL.Enable(EnableCap.DepthTest);
+            GL.Viewport(0, 0, Width, Height);
 
+            shaderProgramID = GL.CreateProgram();
+
+            //Loads and compiles shaders. Attaches them to the given Program
+            LoadShader("Graphics/Shaders/vertex.glsl", ShaderType.VertexShader, shaderProgramID, out vertexShaderID);
+            LoadShader("Graphics/Shaders/fragment.glsl", ShaderType.FragmentShader, shaderProgramID, out fragmentShaderID);
+
+            GL.LinkProgram(shaderProgramID);
+            Console.WriteLine(GL.GetProgramInfoLog(shaderProgramID));
+
+            //Binds shader attributes to application code via the returned indices
+            attribute_vertexPosition = GL.GetAttribLocation(shaderProgramID, "vPosition");
+            attribute_vertexColor = GL.GetAttribLocation(shaderProgramID, "vColor");
+            uniform_modelview = GL.GetUniformLocation(shaderProgramID, "modelview");
+
+            if (attribute_vertexColor == -1 || attribute_vertexPosition == -1 || uniform_modelview == -1)
+                Console.WriteLine("Error binding attributes");
+
+            //Generates buffers
+            GL.GenBuffers(1, out vbo_position);
+            GL.GenBuffers(1, out vbo_color);
             GL.GenBuffers(1, out ibo_elements);
+        }
 
-            shaders.Add("default", new ShaderProgram("Graphics/Shaders/vertex.glsl", "Graphics/Shaders/fragment.glsl", true));
+        /// <summary>
+        /// Attaches the complied shader to the gigven ProgramID
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="type"></param>
+        /// <param name="programID"></param>
+        /// <param name="address"></param>
+        void LoadShader(string filename, ShaderType type, int programID, out int address)
+        {
+            address = GL.CreateShader(type);
+            using (StreamReader reader = new StreamReader(filename))
+            {
+                GL.ShaderSource(address, reader.ReadToEnd());
+            }
+            GL.CompileShader(address);
+            GL.AttachShader(programID, address);
+
+            Console.WriteLine(GL.GetShaderInfoLog(address));
         }
     }
 }

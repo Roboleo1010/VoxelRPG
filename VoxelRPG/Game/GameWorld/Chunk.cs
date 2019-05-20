@@ -64,7 +64,7 @@ namespace VoxelRPG.Game.GameWorld
                             meshes.Add(m);
                     }
         }
-
+ 
         public void Draw()
         {
             MeshCollection meshCollection = new MeshCollection(meshes);

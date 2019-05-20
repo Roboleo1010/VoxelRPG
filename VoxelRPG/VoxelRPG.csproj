@@ -100,9 +100,6 @@
     <Compile Include="Game\GameWorld\Chunk.cs" />
     <Compile Include="Game\GameWorld\World.cs" />
     <Compile Include="Graphics\Camera.cs" />
-    <Compile Include="Graphics\Shaders\AttributeInfo.cs" />
-    <Compile Include="Graphics\Shaders\ShaderProgram.cs" />
-    <Compile Include="Graphics\Shaders\UniformInfo.cs" />
     <Compile Include="Graphics\Meshes\AdaptiveCube.cs" />
     <Compile Include="Graphics\Meshes\Cube.cs" />
     <Compile Include="Graphics\Meshes\Mesh.cs" />
