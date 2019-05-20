@@ -4,17 +4,16 @@ namespace VoxelRPG.Graphics.Meshes
 {
     public class Cube : Mesh
     {
-        Vector3 Color = new Vector3(1, 1, 1);
-        Vector3[] vertices = new Vector3[8];
-
-        public Cube(Vector3 color)
+        public Cube()
         {
             VertexCount = 8;
             IndiceCount = 36;
             ColorCount = 8;
-            Color = color;
+        }
 
-            vertices = new Vector3[] {
+        public override Vector3[] GetVertices()
+        {
+            return new Vector3[] {
                 new Vector3(0f, 0f, 0f),
                 new Vector3(1f, 0f, 0f),
                 new Vector3(1f, 1f, 0f),
@@ -23,13 +22,7 @@ namespace VoxelRPG.Graphics.Meshes
                 new Vector3(1f, 0f, 1f),
                 new Vector3(1f, 1f, 1f),
                 new Vector3(0f, 1f, 1f),
-            };
-
-        }
-
-        public override Vector3[] GetVertices()
-        {
-            return vertices;
+            }; ;
         }
 
         public override int[] GetIndices(int offset = 0)
@@ -78,8 +71,6 @@ namespace VoxelRPG.Graphics.Meshes
 
         public override void CalculateModelMatrix()
         {
-            ModelMatrix = Matrix4.Identity;
-
             ModelMatrix = Matrix4.CreateScale(Scale) * Matrix4.CreateRotationX(Rotation.X) * Matrix4.CreateRotationY(Rotation.Y) *
                           Matrix4.CreateRotationZ(Rotation.Z) * Matrix4.CreateTranslation(Position);
         }

@@ -1,7 +1,7 @@
 ﻿using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using VoxelRPG.Game.Generation;
 using VoxelRPG.Graphics.Meshes;
 using VoxelRPG.Utilitys;
@@ -41,12 +41,14 @@ namespace VoxelRPG.Game.GameWorld
                     heightData[x, z] = generator.GetHeight(x + Position.X, z + Position.Z);
                     for (int y = 0; y < Constants.World.Chunk.Height; y++)
                     {
-                        if (y > heightData[x, z])
-                            blockTypes[x, z, y] = BlockType.AIR;
-                        else if (y == heightData[x, z])
-                            blockTypes[x, z, y] = BlockType.GRASS;
-                        else if (y < heightData[x, z])
-                            blockTypes[x, z, y] = BlockType.STONE;
+                        blockTypes[x, z, y] = BlockType.GRASS;
+
+                        //if (y > heightData[x, z])
+                        //    blockTypes[x, z, y] = BlockType.AIR;
+                        //else if (y == heightData[x, z])
+                        //    blockTypes[x, z, y] = BlockType.GRASS;
+                        //else if (y < heightData[x, z])
+                        //    blockTypes[x, z, y] = BlockType.STONE;
                     }
                 }
         }
@@ -67,6 +69,8 @@ namespace VoxelRPG.Game.GameWorld
         {
             MeshCollection meshCollection = new MeshCollection(meshes);
             Constants.gameManager.window.meshes.Add(meshCollection);
+
+            //Constants.gameManager.window.meshes.AddRange(meshes);
         }
 
         bool HasToRenderSide(int x, int z, int y)
@@ -90,13 +94,13 @@ namespace VoxelRPG.Game.GameWorld
 
             if (type != BlockType.AIR)
             {
-                return new AdaptiveCube(color, new Vector3Int(x, z, y),
-                    HasToRenderSide(x - 1, z, y),       //front
-                    HasToRenderSide(x + 1, z, y),       //back
-                    HasToRenderSide(x, z - 1, y),       //left
-                    HasToRenderSide(x, z + 1, y),       //right
-                    HasToRenderSide(x, z, y + 1),       //top
-                    HasToRenderSide(x, z, y - 1));      //bottom
+                return new AdaptiveCube(color, new Vector3Int(Position.X + x, Position.Z + z, Position.Z + y),
+                    true,//HasToRenderSide(x - 1, z, y),       //front
+                    true,//HasToRenderSide(x + 1, z, y),       //back
+                    true,//HasToRenderSide(x, z - 1, y),       //left
+                    true,//HasToRenderSide(x, z + 1, y),       //right
+                    true,//HasToRenderSide(x, z, y + 1),       //top
+                   true);//HasToRenderSide(x, z, y - 1));      //bottom
             }
 
             return null;

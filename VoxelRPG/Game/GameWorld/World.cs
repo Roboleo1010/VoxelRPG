@@ -14,8 +14,8 @@ namespace VoxelRPG.Game.GameWorld
 
         public Chunk GenerateChunkAt(Vector2Int position) //Position of chunk, not in world
         {
-            Vector2Int chunkPosition = new Vector2Int(position.X + Constants.World.Chunk.Size,
-                                                      position.Z + Constants.World.Chunk.Size);
+            Vector2Int chunkPosition = new Vector2Int(position.X * Constants.World.Chunk.Size,
+                                                      position.Z * Constants.World.Chunk.Size);
 
             Chunk chunk;
             string chunkName = position.ToString();

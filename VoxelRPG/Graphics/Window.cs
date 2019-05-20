@@ -151,6 +151,7 @@ namespace VoxelRPG.Graphics
             CursorVisible = false;
 
             gameManager.world.GenerateChunkAt(new Vector2Int(0, 0));
+            gameManager.world.GenerateChunkAt(new Vector2Int(1, 0));
         }
 
         void InitGraphics()
