@@ -6,16 +6,17 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using VoxelRPG.Game;
+using VoxelRPG.Game.GameWorld;
 using VoxelRPG.Graphics.Meshes;
 using VoxelRPG.Graphics.Shaders;
 using VoxelRPG.Input;
+using VoxelRPG.Utilitys;
 
 namespace VoxelRPG.Graphics
 {
     public class Window : GameWindow
     {
         //References
-        InputManager inputManager;
         public Camera camera = new Camera();
 
         public List<Mesh> meshes = new List<Mesh>();
@@ -42,7 +43,7 @@ namespace VoxelRPG.Graphics
             base.OnUpdateFrame(e);
 
             GameManager.Time += (float)e.Time;
-            inputManager.ProcessInput(Focused);
+            GameManager.inputManager.ProcessInput(Focused);
 
             foreach (Mesh m in meshes)
                 m.OnUpdateFrame(e);
@@ -76,15 +77,18 @@ namespace VoxelRPG.Graphics
         protected override void OnFocusedChanged(EventArgs e)
         {
             base.OnFocusedChanged(e);
-            inputManager.lastMousePos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+            GameManager.inputManager.lastMousePos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
         }
 
         void InitGame()
         {
             GameManager.window = this;
-            inputManager = new InputManager(this, camera);
+            GameManager.inputManager = new InputManager(this, camera);
+            GameManager.world = new World();
 
             CursorVisible = false;
+
+            GameManager.world.GenerateChunkAt(new Vector2Int(0, 0));
         }
 
         void InitGraphics()
