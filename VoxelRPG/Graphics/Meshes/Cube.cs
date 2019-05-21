@@ -9,10 +9,6 @@ namespace VoxelRPG.Graphics.Meshes
             VertexCount = 8;
             IndiceCount = 36;
             ColorCount = 8;
-
-            colorData = GetColors();
-            indiceData = GetIndices();
-            vertexData = GetVertices();
         }
 
         public override Vector3[] GetVertices()
@@ -29,9 +25,9 @@ namespace VoxelRPG.Graphics.Meshes
             }; ;
         }
 
-        public override int[] GetIndices(int offset = 0)
+        public override int[] GetIndices()
         {
-            int[] indices = new int[]{
+            return new int[]{
                 //front
                 0, 7, 3,
                 0, 4, 7,
@@ -51,12 +47,6 @@ namespace VoxelRPG.Graphics.Meshes
                 0, 1, 5,
                 0, 5, 4
             };
-
-            if (offset != 0)
-                for (int i = 0; i < indices.Length; i++)
-                    indices[i] += offset;
-
-            return indices;
         }
 
         public override Vector3[] GetColors()

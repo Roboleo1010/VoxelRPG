@@ -24,11 +24,6 @@ namespace VoxelRPG.Graphics.Meshes
         int vbo_color;
         int ibo_elements;
 
-        //Data
-        public Vector3[] vertexData;
-        public Vector3[] colorData;
-        public int[] indiceData;
-
         public Mesh()
         {
             GL.GenBuffers(1, out vbo_position);
@@ -40,17 +35,17 @@ namespace VoxelRPG.Graphics.Meshes
         {
             //Bind POSITION Buffer
             GL.BindBuffer(BufferTarget.ArrayBuffer, vbo_position);  //Preape buffer for writing
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(vertexData.Length * Vector3.SizeInBytes), vertexData, BufferUsageHint.StaticDraw); //Write into buffer
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(GetVertices().Length * Vector3.SizeInBytes), GetVertices(), BufferUsageHint.StaticDraw); //Write into buffer
             GL.VertexAttribPointer(ShaderInfo.Attribute_vertexPosition, 3, VertexAttribPointerType.Float, false, 0, 0); //For which shader attribute
 
             //Bind COLOR Buffer
             GL.BindBuffer(BufferTarget.ArrayBuffer, vbo_color);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(colorData.Length * Vector3.SizeInBytes), colorData, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(GetColors().Length * Vector3.SizeInBytes), GetColors(), BufferUsageHint.StaticDraw);
             GL.VertexAttribPointer(ShaderInfo.Attribute_vertexColor, 3, VertexAttribPointerType.Float, true, 0, 0);
 
             //Bind INDEX Buffer
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ibo_elements);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indiceData.Length * sizeof(int)), indiceData, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(GetIndices().Length * sizeof(int)), GetIndices(), BufferUsageHint.StaticDraw);
 
             CalculateModelMatrix();
             ViewProjectionMatrix = GameManager.window.camera.GetViewMatrix() * Matrix4.CreatePerspectiveFieldOfView(1.3f, GameManager.window.ClientSize.Width / (float)GameManager.window.ClientSize.Height, 1.0f, 40.0f);
@@ -77,7 +72,7 @@ namespace VoxelRPG.Graphics.Meshes
         }
 
         public abstract Vector3[] GetVertices();
-        public abstract int[] GetIndices(int offset = 0);
+        public abstract int[] GetIndices();
         public abstract Vector3[] GetColors();
         public abstract void CalculateModelMatrix();
     }

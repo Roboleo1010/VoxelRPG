@@ -1,5 +1,4 @@
 ﻿using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using VoxelRPG.Game.Generation;
@@ -22,8 +21,9 @@ namespace VoxelRPG.Game.GameWorld
         BlockType[,,] blockTypes = new BlockType[Constants.World.Chunk.Size, Constants.World.Chunk.Size, Constants.World.Chunk.Height];
         int[,] heightData = new int[Constants.World.Chunk.Size, Constants.World.Chunk.Size];
 
-        //Mesh Data
-        List<Mesh> meshes = new List<Mesh>();
+        public List<Vector3> vertices = new List<Vector3>();
+        public List<Vector3> colors = new List<Vector3>();
+        public List<int> indices = new List<int>();
 
         public Chunk(Vector2Int pos)
         {
@@ -59,18 +59,13 @@ namespace VoxelRPG.Game.GameWorld
                 for (int z = 0; z < Constants.World.Chunk.Size; z++)
                     for (int y = 0; y < Constants.World.Chunk.Height; y++)
                     {
-                        Mesh m = GetMeshData(x, z, y, blockTypes[x, z, y]);
-                        if (m != null)
-                            meshes.Add(m);
+                        GetMeshData(x, z, y, blockTypes[x, z, y]);
                     }
         }
- 
+
         public void Draw()
         {
-            MeshCollection meshCollection = new MeshCollection(meshes);
-            GameManager.window.meshes.Add(meshCollection);
-
-            //Constants.gameManager.window.meshes.AddRange(meshes);
+            GameManager.window.meshes.Add(new GenericMesh(vertices.ToArray(), colors.ToArray(), indices.ToArray()));
         }
 
         bool HasToRenderSide(int x, int z, int y)
@@ -83,27 +78,51 @@ namespace VoxelRPG.Game.GameWorld
             return blockTypes[x, z, y] == BlockType.AIR;
         }
 
-        private Mesh GetMeshData(int x, int z, int y, BlockType type)
+        private void GetMeshData(int x, int z, int y, BlockType type)
         {
-            Vector3 color;
+            Vector3Int actualVoxelPosition = new Vector3Int(Position.X + x, Position.Z + z, Position.Z + y);
 
-            //if (type == BlockType.GRASS)
-            // color = new Vector3((float)21 / 255, (float)188 / 255, (float)18 / 255);
-            //else
-            color = new Vector3((float)r.NextDouble(), (float)r.NextDouble(), (float)r.NextDouble());
+            Vector3 color = new Vector3((float)r.NextDouble(), (float)r.NextDouble(), (float)r.NextDouble());
 
-            if (type != BlockType.AIR)
+            bool renderFront =  true; //HasToRenderSide(x - 1, z, y);        //front
+            bool renderBack =   true; //HasToRenderSide(x + 1, z, y);        //back
+            bool renderLeft =   true; //HasToRenderSide(x, z - 1, y);        //left
+            bool renderRight =  true; //HasToRenderSide(x, z + 1, y);        //right
+            bool renderTop =    true; //HasToRenderSide(x, z, y + 1);        //top
+            bool renderBottom = true; //HasToRenderSide(x, z, y - 1);        //bottom
+
+
+            if (type != BlockType.AIR && (renderFront == true || renderBack == true || renderLeft == true ||
+                renderRight == true || renderTop == true || renderBottom == true))
             {
-                return new AdaptiveCube(color, new Vector3Int(Position.X + x, Position.Z + z, Position.Z + y),
-                    true,//HasToRenderSide(x - 1, z, y),       //front
-                    true,//HasToRenderSide(x + 1, z, y),       //back
-                    true,//HasToRenderSide(x, z - 1, y),       //left
-                    true,//HasToRenderSide(x, z + 1, y),       //right
-                    true,//HasToRenderSide(x, z, y + 1),       //top
-                   true);//HasToRenderSide(x, z, y - 1));      //bottom
-            }
+                vertices.Add(new Vector3(0f + actualVoxelPosition.X, 0f + actualVoxelPosition.Y, 0f + actualVoxelPosition.Z));
+                vertices.Add(new Vector3(1f + actualVoxelPosition.X, 0f + actualVoxelPosition.Y, 0f + actualVoxelPosition.Z));
+                vertices.Add(new Vector3(1f + actualVoxelPosition.X, 1f + actualVoxelPosition.Y, 0f + actualVoxelPosition.Z));
+                vertices.Add(new Vector3(0f + actualVoxelPosition.X, 1f + actualVoxelPosition.Y, 0f + actualVoxelPosition.Z));
 
-            return null;
+                vertices.Add(new Vector3(0f + actualVoxelPosition.X, 0f + actualVoxelPosition.Y, 1f + actualVoxelPosition.Z));
+                vertices.Add(new Vector3(1f + actualVoxelPosition.X, 0f + actualVoxelPosition.Y, 1f + actualVoxelPosition.Z));
+                vertices.Add(new Vector3(1f + actualVoxelPosition.X, 1f + actualVoxelPosition.Y, 1f + actualVoxelPosition.Z));
+                vertices.Add(new Vector3(0f + actualVoxelPosition.X, 1f + actualVoxelPosition.Y, 1f + actualVoxelPosition.Z));
+
+                for (int i = 0; i < 8; i++)
+                    colors.Add(color);
+
+                int vOffset = vertices.Count;
+
+                if (renderFront)
+                    indices.AddRange(new int[] { vOffset + 0, vOffset + 7, vOffset + 3, vOffset + 0, vOffset + 4, vOffset + 7 }); //front
+                if (renderBack)
+                    indices.AddRange(new int[] { vOffset + 1, vOffset + 2, vOffset + 6, vOffset + 6, vOffset + 5, vOffset + 1 }); //back
+                if (renderLeft)
+                    indices.AddRange(new int[] { vOffset + 0, vOffset + 2, vOffset + 1, vOffset + 0, vOffset + 3, vOffset + 2 });  //left
+                if (renderRight)
+                    indices.AddRange(new int[] { vOffset + 4, vOffset + 5, vOffset + 6, vOffset + 6, vOffset + 7, vOffset + 4 }); //right
+                if (renderTop)
+                    indices.AddRange(new int[] { vOffset + 2, vOffset + 3, vOffset + 6, vOffset + 6, vOffset + 3, vOffset + 7 }); //top
+                if (renderBottom)
+                    indices.AddRange(new int[] { vOffset + 0, vOffset + 1, vOffset + 5, vOffset + 0, vOffset + 5, vOffset + 4 }); //bottom
+            }
         }
     }
 }

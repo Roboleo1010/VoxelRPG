@@ -30,12 +30,6 @@ namespace VoxelRPG.Graphics
 
             InitGame();
             InitGraphics();
-
-            meshes.Add(new Cube());
-            meshes.Add(new Cube()
-            {
-                Position = new Vector3(5, 2, 1)
-            });
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
