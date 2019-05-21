@@ -68,7 +68,7 @@ namespace VoxelRPG.Game.GameWorld
         public void Draw()
         {
             MeshCollection meshCollection = new MeshCollection(meshes);
-            Constants.gameManager.window.meshes.Add(meshCollection);
+            GameManager.window.meshes.Add(meshCollection);
 
             //Constants.gameManager.window.meshes.AddRange(meshes);
         }

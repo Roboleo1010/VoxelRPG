@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System;
+using VoxelRPG.Game;
 using VoxelRPG.Graphics.Shaders;
 
 namespace VoxelRPG.Graphics.Meshes
@@ -52,7 +53,7 @@ namespace VoxelRPG.Graphics.Meshes
             GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indiceData.Length * sizeof(int)), indiceData, BufferUsageHint.StaticDraw);
 
             CalculateModelMatrix();
-            ViewProjectionMatrix = Constants.gameManager.window.camera.GetViewMatrix() * Matrix4.CreatePerspectiveFieldOfView(1.3f, Constants.gameManager.window.ClientSize.Width / (float)Constants.gameManager.window.ClientSize.Height, 1.0f, 40.0f);
+            ViewProjectionMatrix = GameManager.window.camera.GetViewMatrix() * Matrix4.CreatePerspectiveFieldOfView(1.3f, GameManager.window.ClientSize.Width / (float)GameManager.window.ClientSize.Height, 1.0f, 40.0f);
             ModelViewProjectionMatrix = ModelMatrix * ViewProjectionMatrix;
 
             //Apply Shaders

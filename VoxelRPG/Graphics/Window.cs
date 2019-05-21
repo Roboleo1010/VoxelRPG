@@ -17,7 +17,6 @@ namespace VoxelRPG.Graphics
         //References
         InputManager inputManager;
         public Camera camera = new Camera();
-        GameManager gameManager;
 
         public List<Mesh> meshes = new List<Mesh>();
 
@@ -42,7 +41,7 @@ namespace VoxelRPG.Graphics
         {
             base.OnUpdateFrame(e);
 
-            gameManager.Time += (float)e.Time;
+            GameManager.Time += (float)e.Time;
             inputManager.ProcessInput(Focused);
 
             foreach (Mesh m in meshes)
@@ -82,7 +81,7 @@ namespace VoxelRPG.Graphics
 
         void InitGame()
         {
-            gameManager = new GameManager(this);
+            GameManager.window = this;
             inputManager = new InputManager(this, camera);
 
             CursorVisible = false;

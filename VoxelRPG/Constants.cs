@@ -4,9 +4,6 @@ namespace VoxelRPG
 {
     public static class Constants
     {
-        public static GameManager gameManager;
-
-
         public static class Camera
         {
             public static readonly float FarClippingPane = 200;
