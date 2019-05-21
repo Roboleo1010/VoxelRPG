@@ -9,6 +9,10 @@ namespace VoxelRPG.Graphics.Meshes
             VertexCount = 8;
             IndiceCount = 36;
             ColorCount = 8;
+
+            colorData = GetColors();
+            indiceData = GetIndices();
+            vertexData = GetVertices();
         }
 
         public override Vector3[] GetVertices()

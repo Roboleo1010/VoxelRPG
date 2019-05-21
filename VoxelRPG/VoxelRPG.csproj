@@ -104,6 +104,7 @@
     <Compile Include="Graphics\Meshes\Cube.cs" />
     <Compile Include="Graphics\Meshes\Mesh.cs" />
     <Compile Include="Graphics\Meshes\MeshCollection.cs" />
+    <Compile Include="Graphics\Shaders\ShaderInfo.cs" />
     <Compile Include="Input\InputManager.cs" />
     <Compile Include="Libs\FastNoise.cs" />
     <Compile Include="Program.cs" />
