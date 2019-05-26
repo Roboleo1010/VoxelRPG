@@ -1,7 +1,6 @@
-﻿using OpenTK;
+﻿using VoxelRPG.Graphics;
+using OpenTK;
 using OpenTK.Input;
-using System;
-using VoxelRPG.Graphics;
 
 namespace VoxelRPG.Input
 {
@@ -54,7 +53,6 @@ namespace VoxelRPG.Input
                 if (Keyboard.GetState().IsKeyDown(Key.Escape))
                 {
                     window.Exit();
-                    //Console.ReadLine();
                 }
             }
         }

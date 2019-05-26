@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VoxelRPG.Libs.Noise;
+﻿using VoxelRPG.Libs.Noise;
 
 namespace VoxelRPG.Game.Generation
 {
-    public class WorldGeneration
+    public class WorldGenerator
     {
         FastNoise generator;
 
-        public WorldGeneration()
+        public WorldGenerator()
         {
             generator = new FastNoise(123); //TODO: Seed
             generator.SetFrequency(0.03f); // größer = steiler, kleiner = flacher
