@@ -39,8 +39,8 @@ namespace VoxelRPG.Graphics
             InitGraphics();
 
             meshes.Add(new Chunk(0, 0));
-            meshes.Add(new Chunk(0, 1));
-            meshes.Add(new Chunk(1, 1));
+            //meshes.Add(new Chunk(0, 1));
+            //meshes.Add(new Chunk(1, 1));
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -50,7 +50,8 @@ namespace VoxelRPG.Graphics
             GameManager.Time += (float)e.Time;
             GameManager.inputManager.ProcessInput(Focused);
 
-            /** In this code, we gather up all the values for the data we need to send to the graphics card. */
+
+            //TODO CACHE!
             List<Vector3> verts = new List<Vector3>();
             List<int> inds = new List<int>();
             List<Vector3> colors = new List<Vector3>();
@@ -79,7 +80,10 @@ namespace VoxelRPG.Graphics
             foreach (Mesh m in meshes)
             {
                 m.CalculateModelMatrix();
-                m.ViewProjectionMatrix = GameManager.window.camera.GetViewMatrix() * Matrix4.CreatePerspectiveFieldOfView(1.3f, GameManager.window.ClientSize.Width / (float)GameManager.window.ClientSize.Height, 1.0f, 40.0f);
+                m.ViewProjectionMatrix = GameManager.window.camera.GetViewMatrix() * Matrix4.CreatePerspectiveFieldOfView(1.3f,
+                                         GameManager.window.ClientSize.Width / (float)GameManager.window.ClientSize.Height,
+                                         Constants.Camera.NearClippingPane, Constants.Camera.FarClippingPane);
+
                 m.ModelViewProjectionMatrix = m.ModelMatrix * m.ViewProjectionMatrix;
             }
 

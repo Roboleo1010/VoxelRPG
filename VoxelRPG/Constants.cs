@@ -14,8 +14,8 @@ namespace VoxelRPG
         {
             public static class Chunk
             {
-                public static readonly int Size = 4;
-                public static readonly int Height = 4;
+                public static readonly int Size = 32;
+                public static readonly int Height = 32;
             }
         }
     }

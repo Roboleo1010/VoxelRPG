@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using System;
 using System.Collections.Generic;
+using VoxelRPG.Game.Generation;
 
 namespace VoxelRPG.Graphics.Meshes
 {
@@ -10,13 +11,15 @@ namespace VoxelRPG.Graphics.Meshes
         public List<Vector3> colors = new List<Vector3>();
         public List<int> indices = new List<int>();
 
-        Vector3 chunkPos;
+        Vector3 chunkPosInList;
         Vector3 chunkPosInWorld;
 
-        BlockType[,,] blockTypes = new BlockType[Constants.World.Chunk.Size, Constants.World.Chunk.Size, Constants.World.Chunk.Height];
+        BlockType[,,] blockTypes = new BlockType[Constants.World.Chunk.Size, Constants.World.Chunk.Height, Constants.World.Chunk.Size];
         int[,] heightData = new int[Constants.World.Chunk.Size, Constants.World.Chunk.Size];
 
         Random r;
+
+        WorldGenerator generator;
 
         enum BlockType
         {
@@ -25,9 +28,10 @@ namespace VoxelRPG.Graphics.Meshes
 
         public Chunk(int x, int z)
         {
-            r = new Random(x+z);
+            generator = new WorldGenerator();
+            r = new Random(x + z);
 
-            chunkPos = new Vector3(x, 0, z);
+            chunkPosInList = new Vector3(x, 0, z);
             chunkPosInWorld = new Vector3(x * Constants.World.Chunk.Size, 0, z * Constants.World.Chunk.Size);
 
             GatherData();
@@ -69,17 +73,15 @@ namespace VoxelRPG.Graphics.Meshes
             for (int x = 0; x < Constants.World.Chunk.Size; x++)
                 for (int z = 0; z < Constants.World.Chunk.Size; z++)
                 {
-                    //heightData[x, z] = generator.GetHeight(x + chunkPos.X, z + chunkPos.Z);
+                    heightData[x, z] = generator.GetHeight(x + (int)chunkPosInWorld.X, z + (int)chunkPosInWorld.Z);
                     for (int y = 0; y < Constants.World.Chunk.Height; y++)
                     {
-                        blockTypes[x, z, y] = BlockType.GRASS;
-
-                        //if (y > heightData[x, z])
-                        //    blockTypes[x, z, y] = BlockType.AIR;
-                        //else if (y == heightData[x, z])
-                        //    blockTypes[x, z, y] = BlockType.GRASS;
-                        //else if (y < heightData[x, z])
-                        //    blockTypes[x, z, y] = BlockType.STONE;
+                        if (y > heightData[x, z])
+                            blockTypes[x, y, z] = BlockType.AIR;
+                        else if (y == heightData[x, z])
+                            blockTypes[x, y, z] = BlockType.GRASS;
+                        else if (y < heightData[x, z])
+                            blockTypes[x, y, z] = BlockType.STONE;
                     }
                 }
         }
@@ -90,27 +92,38 @@ namespace VoxelRPG.Graphics.Meshes
                 for (int z = 0; z < Constants.World.Chunk.Size; z++)
                     for (int y = 0; y < Constants.World.Chunk.Height; y++)
                     {
-                        GetMeshData(x, z, y, blockTypes[x, z, y]);
+                        GetMeshData(x, y, z, blockTypes[x, y, z]);
                     }
         }
 
-        private void GetMeshData(int x, int z, int y, BlockType type)
+        bool HasToRenderSide(int x, int y, int z)
+        {
+            if (x < 0 || x >= Constants.World.Chunk.Size ||
+                y < 0 || y >= Constants.World.Chunk.Height ||
+                z < 0 || z >= Constants.World.Chunk.Size)
+                return false;
+
+            return blockTypes[x, y, z] == BlockType.AIR;
+        }
+
+        private void GetMeshData(int x, int y, int z, BlockType type)
         {
             Vector3 actualVoxelPosition = new Vector3(chunkPosInWorld.X + x, y, chunkPosInWorld.Z + z);
 
             Vector3 color = new Vector3((float)r.NextDouble(), (float)r.NextDouble(), (float)r.NextDouble());
 
-            bool renderFront = true; //HasToRenderSide(x - 1, z, y);        //front
-            bool renderBack = true; //HasToRenderSide(x + 1, z, y);        //back
-            bool renderLeft = true; //HasToRenderSide(x, z - 1, y);        //left
-            bool renderRight = true; //HasToRenderSide(x, z + 1, y);        //right
-            bool renderTop = true; //HasToRenderSide(x, z, y + 1);        //top
-            bool renderBottom = true; //HasToRenderSide(x, z, y - 1);        //bottom
+            bool renderFront = HasToRenderSide(x - 1, y, z);
+            bool renderBack = HasToRenderSide(x + 1, y, z);
+            bool renderLeft = HasToRenderSide(x, y, z - 1);
+            bool renderRight = HasToRenderSide(x, y, z + 1);
+            bool renderTop = HasToRenderSide(x, y + 1, z);
+            bool renderBottom = HasToRenderSide(x, y - 1, z);
 
-
-            if (type != BlockType.AIR && (renderFront == true || renderBack == true || renderLeft == true ||
-                renderRight == true || renderTop == true || renderBottom == true))
+            if (type != BlockType.AIR && renderFront == true || renderBack == true || renderLeft == true ||
+                                         renderRight == true || renderTop == true || renderBottom == true)
             {
+                int vOffset = vertices.Count;
+
                 vertices.Add(new Vector3(0f + actualVoxelPosition.X, 0f + actualVoxelPosition.Y, 0f + actualVoxelPosition.Z));
                 vertices.Add(new Vector3(1f + actualVoxelPosition.X, 0f + actualVoxelPosition.Y, 0f + actualVoxelPosition.Z));
                 vertices.Add(new Vector3(1f + actualVoxelPosition.X, 1f + actualVoxelPosition.Y, 0f + actualVoxelPosition.Z));
@@ -123,8 +136,6 @@ namespace VoxelRPG.Graphics.Meshes
 
                 for (int i = 0; i < 8; i++)
                     colors.Add(color);
-
-                int vOffset = vertices.Count;
 
                 if (renderFront)
                     indices.AddRange(new int[] { vOffset + 0, vOffset + 7, vOffset + 3, vOffset + 0, vOffset + 4, vOffset + 7 }); //front
