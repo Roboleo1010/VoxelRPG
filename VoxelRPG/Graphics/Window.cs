@@ -1,8 +1,4 @@
-﻿using VoxelRPG.Game;
-using VoxelRPG.Graphics.Meshes;
-using VoxelRPG.Graphics.Shaders;
-using VoxelRPG.Input;
-using OpenTK;
+﻿using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
@@ -10,6 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using VoxelRPG.Game;
+using VoxelRPG.Game.GameWorld;
+using VoxelRPG.Graphics.Meshes;
+using VoxelRPG.Graphics.Shaders;
+using VoxelRPG.Input;
+using VoxelRPG.Utilitys;
 
 namespace VoxelRPG.Graphics
 {
@@ -38,9 +40,12 @@ namespace VoxelRPG.Graphics
             InitGame();
             InitGraphics();
 
-            meshes.Add(new Chunk(0, 0));
-            //meshes.Add(new Chunk(0, 1));
-            //meshes.Add(new Chunk(1, 1));
+            World w = new World();
+
+            w.GenerateChunkAt(new Vector3Int(0, 0, 0));
+            w.GenerateChunkAt(new Vector3Int(1, 0, 0));
+            w.GenerateChunkAt(new Vector3Int(1, 0, 1));
+            w.GenerateChunkAt(new Vector3Int(0, 0, 1));
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -167,6 +172,11 @@ namespace VoxelRPG.Graphics
 
             GL.ClearColor(Color.CornflowerBlue);
             GL.PointSize(5f);
+        }
+
+        public void AddMesh(Mesh m)
+        {
+            meshes.Add(m);
         }
     }
 }

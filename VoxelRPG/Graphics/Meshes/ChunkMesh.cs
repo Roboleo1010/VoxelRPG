@@ -1,45 +1,26 @@
 ﻿using OpenTK;
 using System;
 using System.Collections.Generic;
-using VoxelRPG.Game.Generation;
+using VoxelRPG.Game;
+using VoxelRPG.Game.GameWorld;
+using VoxelRPG.Utilitys;
+using static VoxelRPG.Constants.Enums.Chunk;
 
 namespace VoxelRPG.Graphics.Meshes
 {
-    public class Chunk : Mesh
+    public class ChunkMesh : Mesh
     {
         public List<Vector3> vertices = new List<Vector3>();
         public List<Vector3> colors = new List<Vector3>();
         public List<int> indices = new List<int>();
 
-        Vector3 chunkPosInList;
-        Vector3 chunkPosInWorld;
+        Chunk chunk;
+        Random random;
 
-        BlockType[,,] blockTypes = new BlockType[Constants.World.Chunk.Size, Constants.World.Chunk.Height, Constants.World.Chunk.Size];
-        int[,] heightData = new int[Constants.World.Chunk.Size, Constants.World.Chunk.Size];
-
-        Random r;
-
-        WorldGenerator generator;
-
-        enum BlockType
+        public ChunkMesh(Chunk c)
         {
-            STONE, GRASS, AIR
-        };
-
-        public Chunk(int x, int z)
-        {
-            generator = new WorldGenerator();
-            r = new Random(x + z);
-
-            chunkPosInList = new Vector3(x, 0, z);
-            chunkPosInWorld = new Vector3(x * Constants.World.Chunk.Size, 0, z * Constants.World.Chunk.Size);
-
-            GatherData();
-            Build();
-
-            VertCount = vertices.Count;
-            IndiceCount = indices.Count;
-            ColorDataCount = vertices.Count;
+            chunk = c;
+            random = new Random();
         }
 
         public override Vector3[] GetVerts()
@@ -68,49 +49,42 @@ namespace VoxelRPG.Graphics.Meshes
             ModelMatrix = Matrix4.CreateScale(Scale) * Matrix4.CreateRotationX(Rotation.X) * Matrix4.CreateRotationY(Rotation.Y) * Matrix4.CreateRotationZ(Rotation.Z) * Matrix4.CreateTranslation(Position);
         }
 
-        public void GatherData()
-        {
-            for (int x = 0; x < Constants.World.Chunk.Size; x++)
-                for (int z = 0; z < Constants.World.Chunk.Size; z++)
-                {
-                    heightData[x, z] = generator.GetHeight(x + (int)chunkPosInWorld.X, z + (int)chunkPosInWorld.Z);
-                    for (int y = 0; y < Constants.World.Chunk.Height; y++)
-                    {
-                        if (y > heightData[x, z])
-                            blockTypes[x, y, z] = BlockType.AIR;
-                        else if (y == heightData[x, z])
-                            blockTypes[x, y, z] = BlockType.GRASS;
-                        else if (y < heightData[x, z])
-                            blockTypes[x, y, z] = BlockType.STONE;
-                    }
-                }
-        }
-
         public void Build()
         {
             for (int x = 0; x < Constants.World.Chunk.Size; x++)
                 for (int z = 0; z < Constants.World.Chunk.Size; z++)
-                    for (int y = 0; y < Constants.World.Chunk.Height; y++)
+                    for (int y = 0; y < Constants.World.Chunk.Size; y++)
                     {
-                        GetMeshData(x, y, z, blockTypes[x, y, z]);
+                        GetMeshData(x, y, z, chunk.blockTypes[x, y, z]);
                     }
+
+            VertCount = vertices.Count;
+            IndiceCount = indices.Count;
+            ColorDataCount = vertices.Count;
+        }
+
+        public void Render()
+        {
+            GameManager.window.AddMesh(this);
         }
 
         bool HasToRenderSide(int x, int y, int z)
         {
             if (x < 0 || x >= Constants.World.Chunk.Size ||
-                y < 0 || y >= Constants.World.Chunk.Height ||
+                y < 0 || y >= Constants.World.Chunk.Size ||
                 z < 0 || z >= Constants.World.Chunk.Size)
                 return false;
 
-            return blockTypes[x, y, z] == BlockType.AIR;
+            return chunk.blockTypes[x, y, z] == BlockType.AIR;
         }
 
         private void GetMeshData(int x, int y, int z, BlockType type)
         {
-            Vector3 actualVoxelPosition = new Vector3(chunkPosInWorld.X + x, y, chunkPosInWorld.Z + z);
+            Vector3Int actualVoxelPosition = new Vector3Int(chunk.chunkPositionInWorld.X + x,
+                                                            chunk.chunkPositionInWorld.Y + y,
+                                                            chunk.chunkPositionInWorld.Z + z);
 
-            Vector3 color = new Vector3((float)r.NextDouble(), (float)r.NextDouble(), (float)r.NextDouble());
+            Vector3 color = new Vector3((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
 
             bool renderFront = HasToRenderSide(x - 1, y, z);
             bool renderBack = HasToRenderSide(x + 1, y, z);
@@ -119,8 +93,8 @@ namespace VoxelRPG.Graphics.Meshes
             bool renderTop = HasToRenderSide(x, y + 1, z);
             bool renderBottom = HasToRenderSide(x, y - 1, z);
 
-            if (type != BlockType.AIR && renderFront == true || renderBack == true || renderLeft == true ||
-                                         renderRight == true || renderTop == true || renderBottom == true)
+            if (type != BlockType.AIR && (renderFront == true || renderBack == true || renderLeft == true ||
+                                          renderRight == true || renderTop == true || renderBottom == true))
             {
                 int vOffset = vertices.Count;
 
