@@ -5,6 +5,7 @@ using VoxelRPG.Game;
 using VoxelRPG.Game.GameWorld;
 using VoxelRPG.Utilitys;
 using static VoxelRPG.Constants.Enums.Chunk;
+using static VoxelRPG.Constants.Enums.Mesh;
 
 namespace VoxelRPG.Graphics.Meshes
 {
@@ -23,7 +24,7 @@ namespace VoxelRPG.Graphics.Meshes
             random = new Random();
         }
 
-        public override Vector3[] GetVerts()
+        public override Vector3[] GetVertices()
         {
             return vertices.ToArray();
         }
@@ -39,7 +40,7 @@ namespace VoxelRPG.Graphics.Meshes
             return inds;
         }
 
-        public override Vector3[] GetColorData()
+        public override Vector3[] GetColors()
         {
             return colors.ToArray();
         }
@@ -58,14 +59,14 @@ namespace VoxelRPG.Graphics.Meshes
                         GetMeshData(x, y, z, chunk.blockTypes[x, y, z]);
                     }
 
-            VertCount = vertices.Count;
+            VertexCount = vertices.Count;
             IndiceCount = indices.Count;
-            ColorDataCount = vertices.Count;
+            ColorCount = vertices.Count;
         }
 
         public void Render()
         {
-            GameManager.window.AddMesh(this);
+            GameManager.window.AddMesh(this, MeshType.STATIC);
         }
 
         bool HasToRenderSide(int x, int y, int z)

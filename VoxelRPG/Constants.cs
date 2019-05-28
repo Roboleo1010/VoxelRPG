@@ -14,7 +14,7 @@ namespace VoxelRPG
         {
             public static class Chunk
             {
-                public static readonly int Size = 32;
+                public static readonly int Size = 64;
             }
         }
 
@@ -25,6 +25,13 @@ namespace VoxelRPG
                 public enum BlockType
                 {
                     STONE, GRASS, AIR
+                };
+            }
+            public static class Mesh
+            {
+                public enum MeshType
+                {
+                    STATIC, DYNAMIC
                 };
             }
         }

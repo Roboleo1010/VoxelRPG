@@ -12,6 +12,7 @@ using VoxelRPG.Graphics.Meshes;
 using VoxelRPG.Graphics.Shaders;
 using VoxelRPG.Input;
 using VoxelRPG.Utilitys;
+using static VoxelRPG.Constants.Enums.Mesh;
 
 namespace VoxelRPG.Graphics
 {
@@ -42,10 +43,13 @@ namespace VoxelRPG.Graphics
 
             World w = new World();
 
-            w.GenerateChunkAt(new Vector3Int(0, 0, 0));
-            w.GenerateChunkAt(new Vector3Int(1, 0, 0));
-            w.GenerateChunkAt(new Vector3Int(1, 0, 1));
-            w.GenerateChunkAt(new Vector3Int(0, 0, 1));
+            int size = 3;
+
+            for (int x = -size; x < size; x++)
+                for (int z = -size; z < size; z++)
+                    w.GenerateChunkAt(new Vector3Int(x, 0, z));
+
+            Console.WriteLine("Generated {0} chunks", meshes.Count);
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -55,7 +59,6 @@ namespace VoxelRPG.Graphics
             GameManager.Time += (float)e.Time;
             GameManager.inputManager.ProcessInput(Focused);
 
-
             //TODO CACHE!
             List<Vector3> verts = new List<Vector3>();
             List<int> inds = new List<int>();
@@ -64,15 +67,18 @@ namespace VoxelRPG.Graphics
             int vertcount = 0;
             foreach (Mesh m in meshes)
             {
-                verts.AddRange(m.GetVerts().ToList());
+                verts.AddRange(m.GetVertices().ToList());
                 inds.AddRange(m.GetIndices(vertcount).ToList());
-                colors.AddRange(m.GetColorData().ToList());
-                vertcount += m.VertCount;
+                colors.AddRange(m.GetColors().ToList());
+                vertcount += m.VertexCount;
             }
 
             vertdata = verts.ToArray();
             indicedata = inds.ToArray();
             coldata = colors.ToArray();
+            //end todo
+
+            Title = RenderFrequency + "";
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, vbo_position);
             GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StaticDraw);
@@ -103,6 +109,7 @@ namespace VoxelRPG.Graphics
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
+
             GL.Viewport(0, 0, Width, Height);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.Enable(EnableCap.DepthTest);
@@ -115,7 +122,7 @@ namespace VoxelRPG.Graphics
             foreach (Mesh m in meshes)
             {
                 GL.UniformMatrix4(ShaderInfo.Uniform_modelview, false, ref m.ModelViewProjectionMatrix);
-                GL.DrawElements(BeginMode.Triangles, m.IndiceCount, DrawElementsType.UnsignedInt, indiceAt * sizeof(uint));
+                GL.DrawElements(BeginMode.Triangles, m.IndiceCount, DrawElementsType.UnsignedInt, indiceAt * sizeof(uint)); // LIMIT!!!
                 indiceAt += m.IndiceCount;
             }
 
@@ -174,7 +181,7 @@ namespace VoxelRPG.Graphics
             GL.PointSize(5f);
         }
 
-        public void AddMesh(Mesh m)
+        public void AddMesh(Mesh m, MeshType type)
         {
             meshes.Add(m);
         }
