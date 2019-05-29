@@ -5,9 +5,9 @@ using OpenTK.Input;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using VoxelRPG.Engine.Game;
 using VoxelRPG.Engine.Graphics.Meshes;
 using VoxelRPG.Engine.Shaders;
-using VoxelRPG.Engine.Game;
 using VoxelRPG.Game;
 using VoxelRPG.Game.Entity;
 using VoxelRPG.Game.Enviroment;
@@ -30,7 +30,7 @@ namespace VoxelRPG.Engine.Graphics
 
         #region Game References
         Player player;
-        public List<GameObject> gameObjects = new List<GameObject>();
+        List<GameObject> gameObjects = new List<GameObject>();
         #endregion
 
         public Window() : base(1024, 724, new GraphicsMode(32, 24, 0, 4))
@@ -206,5 +206,17 @@ namespace VoxelRPG.Engine.Graphics
             GL.ClearColor(Color.CornflowerBlue);
             GL.PointSize(8f);
         }
+
+        #region GameObject Helper
+        public void AddGameObject(GameObject o)
+        {
+            gameObjects.Add(o);
+        }
+
+        public void RemoveGameObject(GameObject o)
+        {
+            gameObjects.Remove(o);
+        }
+        #endregion
     }
 }

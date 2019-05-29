@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using OpenTK.Input;
 using VoxelRPG.Engine.Graphics;
+using VoxelRPG.Game;
 using VoxelRPG.Game.Entity;
 
 namespace VoxelRPG.Input

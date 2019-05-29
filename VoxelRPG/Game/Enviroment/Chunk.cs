@@ -51,10 +51,10 @@ namespace VoxelRPG.Game.Enviroment
 
         public void Queue()
         {
-            GameManager.window.gameObjects.Add(this);
+            GameManager.window.AddGameObject(this);
         }
 
-        public override Mesh GetMesh()
+        protected override Mesh GetMeshVirtual()
         {
             if (isEmpty)
                 return null;

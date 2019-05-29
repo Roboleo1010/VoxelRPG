@@ -11,7 +11,7 @@ namespace VoxelRPG.Engine.Game
             mesh = m;
         }
 
-        public override Mesh GetMesh()
+        protected override Mesh GetMeshVirtual()
         {
             return mesh;
         }
