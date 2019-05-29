@@ -1,5 +1,5 @@
-﻿using OpenTK;
-using System;
+﻿using System;
+using System.Reflection;
 using VoxelRPG.Engine.Game.Components;
 using VoxelRPG.Engine.Graphics.Meshes;
 using VoxelRPG.Game;
@@ -7,20 +7,20 @@ using static VoxelRPG.Constants.Enums;
 
 namespace VoxelRPG.Engine.Game
 {
-    public abstract class GameObject
+    public class GameObject
     {
         Component[] components;
         bool IsActive = true;
         string name = string.Empty;
 
         #region Component Propertys
-        public Transform Transform { get { return (Transform)GetComponent<Transform>(); } }
+        public Transform Transform { get { return (Transform)GetComponent(ComponentType.Transform); } }
         #endregion
 
         public GameObject()
         {
             components = new Component[Enum.GetNames(typeof(ComponentType)).Length];
-            AddComponent<Transform>();
+            AddComponent<Transform>(ComponentType.Transform);
         }
 
         public void SetActive(bool newState)
@@ -37,7 +37,8 @@ namespace VoxelRPG.Engine.Game
         public void OnUpdate(float deltaTime)
         {
             for (int i = 0; i < components.Length; i++)
-                components[i].OnUpdate(deltaTime);
+                if (components[i] != null)
+                    components[i].OnUpdate(deltaTime);
 
             OnUpdateVirtual(deltaTime);
         }
@@ -45,21 +46,6 @@ namespace VoxelRPG.Engine.Game
         protected virtual void OnUpdateVirtual(float deltaTime)
         {
 
-        }
-        #endregion
-
-        #region Virtual GetMesh
-        public Mesh GetMesh()
-        {
-            if (IsActive)
-                return GetMeshVirtual();
-            else
-                return null;
-        }
-
-        protected virtual Mesh GetMeshVirtual()
-        {
-            return null;
         }
         #endregion
 
@@ -78,19 +64,20 @@ namespace VoxelRPG.Engine.Game
         #endregion
 
         #region Components
-        public void AddComponent<T>()
+        public Component AddComponent<T>(ComponentType type)
         {
-            components[GetEnumByType<T>()] = (Component)Activator.CreateInstance(typeof(T));
+            components[(int)type] = (Component)Activator.CreateInstance(typeof(T)); //TODO: Create by string
+            return components[(int)type];
         }
 
-        public Component GetComponent<T>()
+        public Component GetComponent(ComponentType type)
         {
-            return components[GetEnumByType<T>()];
+            return components[(int)type];
         }
 
-        int GetEnumByType<T>()
+        public void RemoveComponent(ComponentType type)
         {
-            return (int)Enum.Parse(typeof(ComponentType), typeof(T).Name);
+            components[(int)type] = null;
         }
         #endregion
     }

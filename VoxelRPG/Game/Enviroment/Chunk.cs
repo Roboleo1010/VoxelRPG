@@ -3,6 +3,8 @@ using VoxelRPG.Engine.Graphics.Meshes;
 using VoxelRPG.Engine.Game;
 using VoxelRPG.Game.Generation;
 using VoxelRPG.Utilitys;
+using VoxelRPG.Engine.Game.Components;
+using static VoxelRPG.Constants.Enums;
 
 namespace VoxelRPG.Game.Enviroment
 {
@@ -47,19 +49,14 @@ namespace VoxelRPG.Game.Enviroment
         {
             mesh = new ChunkMesh(this);
             mesh.Build();
+
+            Renderer renderer = (Renderer)AddComponent<Renderer>(ComponentType.Renderer);
+            renderer.mesh = mesh;
         }
 
         public void Queue()
         {
             GameManager.window.AddGameObject(this);
-        }
-
-        protected override Mesh GetMeshVirtual()
-        {
-            if (isEmpty)
-                return null;
-            else
-                return mesh;
         }
     }
 }

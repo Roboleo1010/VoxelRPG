@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using VoxelRPG.Engine.Game;
+using VoxelRPG.Engine.Game.Components;
 using VoxelRPG.Engine.Graphics.Meshes;
 using VoxelRPG.Engine.Shaders;
 using VoxelRPG.Game;
@@ -13,6 +14,7 @@ using VoxelRPG.Game.Entity;
 using VoxelRPG.Game.Enviroment;
 using VoxelRPG.Input;
 using VoxelRPG.Utilitys;
+using static VoxelRPG.Constants.Enums;
 
 namespace VoxelRPG.Engine.Graphics
 {
@@ -66,8 +68,11 @@ namespace VoxelRPG.Engine.Graphics
 
             foreach (GameObject o in gameObjects)
             {
-                Mesh m = o.GetMesh();
+                Renderer r = (Renderer)o.GetComponent(ComponentType.Renderer);
+                if (r == null)
+                    continue;
 
+                Mesh m = r.mesh;
                 if (m == null)
                     continue;
 
@@ -92,8 +97,11 @@ namespace VoxelRPG.Engine.Graphics
 
             foreach (GameObject o in gameObjects)
             {
-                Mesh m = o.GetMesh();
+                Renderer r = (Renderer)o.GetComponent(ComponentType.Renderer);
+                if (r == null)
+                    continue;
 
+                Mesh m = r.mesh;
                 if (m == null)
                     continue;
 
@@ -128,8 +136,11 @@ namespace VoxelRPG.Engine.Graphics
 
             foreach (GameObject o in gameObjects)
             {
-                Mesh m = o.GetMesh();
+                Renderer r = (Renderer)o.GetComponent(ComponentType.Renderer);
+                if (r == null)
+                    continue;
 
+                Mesh m = r.mesh;
                 if (m == null)
                     continue;
 
@@ -172,10 +183,10 @@ namespace VoxelRPG.Engine.Graphics
             GameManager.inputManager = new InputManager(this, player);
             CursorVisible = false;
 
-            gameObjects.Add(new MeshGameObject(new Cube()
-            {
-                Position = new Vector3(0, 0, 5)
-            }));
+            GameObject cube = new GameObject();
+            Renderer r = (Renderer)cube.AddComponent<Renderer>(ComponentType.Renderer);
+            r.mesh = new Cube();
+            gameObjects.Add(cube);
 
             //Generate world
             int size = 1;
