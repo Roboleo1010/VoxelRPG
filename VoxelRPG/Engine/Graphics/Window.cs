@@ -7,13 +7,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using VoxelRPG.Engine.Graphics.Meshes;
 using VoxelRPG.Engine.Shaders;
-using VoxelRPG.Enige.Game;
+using VoxelRPG.Engine.Game;
 using VoxelRPG.Game;
 using VoxelRPG.Game.Entity;
 using VoxelRPG.Game.Enviroment;
 using VoxelRPG.Input;
 using VoxelRPG.Utilitys;
-using static VoxelRPG.Constants.Enums.Mesh;
 
 namespace VoxelRPG.Engine.Graphics
 {
@@ -31,8 +30,7 @@ namespace VoxelRPG.Engine.Graphics
 
         #region Game References
         Player player;
-        List<GameObject> gameObjects = new List<GameObject>();
-        List<Mesh> meshes = new List<Mesh>();
+        public List<GameObject> gameObjects = new List<GameObject>();
         #endregion
 
         public Window() : base(1024, 724, new GraphicsMode(32, 24, 0, 4))
@@ -65,8 +63,14 @@ namespace VoxelRPG.Engine.Graphics
             List<Vector3> colors = new List<Vector3>();
 
             int vertcount = 0;
-            foreach (Mesh m in meshes)
+
+            foreach (GameObject o in gameObjects)
             {
+                Mesh m = o.GetMesh();
+
+                if (m == null)
+                    continue;
+
                 verts.AddRange(m.GetVertices());
                 inds.AddRange(m.GetIndices(vertcount));
                 colors.AddRange(m.GetColors());
@@ -78,8 +82,6 @@ namespace VoxelRPG.Engine.Graphics
             coldata = colors.ToArray();
             //end todo
 
-
-
             GL.BindBuffer(BufferTarget.ArrayBuffer, vbo_position);
             GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StaticDraw);
             GL.VertexAttribPointer(ShaderInfo.Attribute_vertexPosition, 3, VertexAttribPointerType.Float, false, 0, 0);
@@ -88,11 +90,13 @@ namespace VoxelRPG.Engine.Graphics
             GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(coldata.Length * Vector3.SizeInBytes), coldata, BufferUsageHint.StaticDraw);
             GL.VertexAttribPointer(ShaderInfo.Attribute_vertexColor, 3, VertexAttribPointerType.Float, true, 0, 0);
 
-            //Mesh p = meshes.ElementAt(0);
-            //p.Position = new Vector3(p.Position.X, p.Position.Y - 0.05f * GameManager.Time, p.Position.Z); /*new Vector3(0.3f, -0.5f + (float)Math.Sin(GameManager.Time), -3.0f);*/
-
-            foreach (Mesh m in meshes)
+            foreach (GameObject o in gameObjects)
             {
+                Mesh m = o.GetMesh();
+
+                if (m == null)
+                    continue;
+
                 m.CalculateModelMatrix();
                 m.ViewProjectionMatrix = player.camera.GetViewMatrix() * Matrix4.CreatePerspectiveFieldOfView(1.3f,
                                          GameManager.window.ClientSize.Width / (float)GameManager.window.ClientSize.Height,
@@ -122,10 +126,15 @@ namespace VoxelRPG.Engine.Graphics
 
             int indiceAt = 0;
 
-            foreach (Mesh m in meshes)
+            foreach (GameObject o in gameObjects)
             {
+                Mesh m = o.GetMesh();
+
+                if (m == null)
+                    continue;
+
                 GL.UniformMatrix4(ShaderInfo.Uniform_modelview, false, ref m.ModelViewProjectionMatrix);
-                GL.DrawElements(BeginMode.Triangles, m.IndiceCount, DrawElementsType.UnsignedInt, indiceAt * sizeof(uint)); // LIMIT!!!
+                GL.DrawElements(BeginMode.Triangles, m.IndiceCount, DrawElementsType.UnsignedInt, indiceAt * sizeof(uint));
                 indiceAt += m.IndiceCount;
             }
 
@@ -163,10 +172,10 @@ namespace VoxelRPG.Engine.Graphics
             GameManager.inputManager = new InputManager(this, player);
             CursorVisible = false;
 
-            meshes.Add(new Cube()
+            gameObjects.Add(new MeshGameObject(new Cube()
             {
-                Position = new Vector3(0, 30, -10)
-            });
+                Position = new Vector3(0, 0, 5)
+            }));
 
             //Generate world
             int size = 1;
@@ -196,11 +205,6 @@ namespace VoxelRPG.Engine.Graphics
 
             GL.ClearColor(Color.CornflowerBlue);
             GL.PointSize(8f);
-        }
-
-        public void AddMesh(Mesh m, MeshType type)
-        {
-            meshes.Add(m);
         }
     }
 }

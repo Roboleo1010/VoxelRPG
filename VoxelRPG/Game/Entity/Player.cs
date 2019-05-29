@@ -17,11 +17,6 @@ namespace VoxelRPG.Game.Entity
             camera = new Camera(this);
         }
 
-        public override void OnUpdate(float deltaTime)
-        {
-            base.OnUpdate(deltaTime);
-        }
-
         public void Move(float x, float y, float z)
         {
             Vector3 offset = new Vector3();

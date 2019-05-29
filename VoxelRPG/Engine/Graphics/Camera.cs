@@ -1,6 +1,6 @@
 ﻿using OpenTK;
 using System;
-using VoxelRPG.Enige.Game;
+using VoxelRPG.Engine.Game;
 using VoxelRPG.Game.Enviroment;
 
 namespace VoxelRPG.Engine.Graphics

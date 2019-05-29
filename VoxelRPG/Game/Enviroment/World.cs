@@ -22,6 +22,7 @@ namespace VoxelRPG.Game.Enviroment
                 chunk = new Chunk(position);
                 chunk.Generate();
                 chunk.Build();
+                chunk.Queue();
                 chunks.TryAdd(chunkName, chunk);
             }
 

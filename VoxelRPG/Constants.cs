@@ -36,13 +36,6 @@ namespace VoxelRPG
                     STONE, GRASS, AIR, SNOW
                 };
             }
-            public static class Mesh
-            {
-                public enum MeshType
-                {
-                    STATIC, DYNAMIC
-                };
-            }
         }
     }
 }

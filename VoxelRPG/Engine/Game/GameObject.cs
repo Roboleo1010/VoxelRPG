@@ -1,6 +1,7 @@
 ﻿using OpenTK;
+using VoxelRPG.Engine.Graphics.Meshes;
 
-namespace VoxelRPG.Enige.Game
+namespace VoxelRPG.Engine.Game
 {
     public abstract class GameObject
     {
@@ -8,8 +9,11 @@ namespace VoxelRPG.Enige.Game
         public Vector3 Rotation { get; set; }
 
         public virtual void OnUpdate(float deltaTime)
-        {
+        { }
 
+        public virtual Mesh GetMesh()
+        {
+            return null;
         }
     }
 }

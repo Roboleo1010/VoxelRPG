@@ -1,10 +1,12 @@
-﻿using VoxelRPG.Engine.Graphics.Meshes;
+﻿using System;
+using VoxelRPG.Engine.Graphics.Meshes;
+using VoxelRPG.Engine.Game;
 using VoxelRPG.Game.Generation;
 using VoxelRPG.Utilitys;
 
 namespace VoxelRPG.Game.Enviroment
 {
-    public class Chunk
+    public class Chunk : GameObject
     {
         public Vector3Int chunkPos;
         public Vector3Int chunkWorldPos;
@@ -41,15 +43,23 @@ namespace VoxelRPG.Game.Enviroment
                 }
         }
 
-        public bool Build()
+        public void Build()
         {
-            if (isEmpty)
-                return false;
-
             mesh = new ChunkMesh(this);
             mesh.Build();
-            mesh.Render();
-            return true;
+        }
+
+        public void Queue()
+        {
+            GameManager.window.gameObjects.Add(this);
+        }
+
+        public override Mesh GetMesh()
+        {
+            if (isEmpty)
+                return null;
+            else
+                return mesh;
         }
     }
 }

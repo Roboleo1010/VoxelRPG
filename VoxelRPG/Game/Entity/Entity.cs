@@ -1,4 +1,4 @@
-﻿using VoxelRPG.Enige.Game;
+﻿using VoxelRPG.Engine.Game;
 using VoxelRPG.Game.Enviroment;
 
 namespace VoxelRPG.Game.Entity

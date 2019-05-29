@@ -1,11 +1,9 @@
 ﻿using OpenTK;
 using System;
 using System.Collections.Generic;
-using VoxelRPG.Game;
 using VoxelRPG.Game.Enviroment;
 using VoxelRPG.Utilitys;
 using static VoxelRPG.Constants.Enums.Chunk;
-using static VoxelRPG.Constants.Enums.Mesh;
 
 namespace VoxelRPG.Engine.Graphics.Meshes
 {
@@ -62,11 +60,6 @@ namespace VoxelRPG.Engine.Graphics.Meshes
             VertexCount = vertices.Count;
             IndiceCount = indices.Count;
             ColorCount = vertices.Count;
-        }
-
-        public void Render()
-        {
-            GameManager.window.AddMesh(this, MeshType.STATIC);
         }
 
         bool HasToRenderSide(int x, int y, int z)
