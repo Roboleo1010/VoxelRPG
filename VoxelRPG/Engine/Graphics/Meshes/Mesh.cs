@@ -1,6 +1,6 @@
 ﻿using OpenTK;
 
-namespace VoxelRPG.Graphics.Meshes
+namespace VoxelRPG.Engine.Graphics.Meshes
 {
     public abstract class Mesh
     {

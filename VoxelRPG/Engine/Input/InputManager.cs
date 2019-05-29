@@ -1,20 +1,21 @@
-﻿using VoxelRPG.Graphics;
-using OpenTK;
+﻿using OpenTK;
 using OpenTK.Input;
+using VoxelRPG.Engine.Graphics;
+using VoxelRPG.Game.Entity;
 
 namespace VoxelRPG.Input
 {
     public class InputManager
     {
         Window window;
-        Camera camera;
+        Player player;
 
         public Vector2 lastMousePos = new Vector2();
 
-        public InputManager(Window window, Camera camera)
+        public InputManager(Window window, Player p)
         {
             this.window = window;
-            this.camera = camera;
+            this.player = p;
         }
 
         public void ProcessInput(bool focused)
@@ -23,32 +24,32 @@ namespace VoxelRPG.Input
             {
                 Vector2 delta = lastMousePos - new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
 
-                camera.AddRotation(delta.X, delta.Y);
+                player.AddRotation(delta.X, delta.Y);
                 lastMousePos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
 
                 if (Keyboard.GetState().IsKeyDown(Key.W))
                 {
-                    camera.Move(0f, 0.1f, 0f);
+                    player.Move(0f, 0.1f, 0f);
                 }
                 if (Keyboard.GetState().IsKeyDown(Key.S))
                 {
-                    camera.Move(0f, -0.1f, 0f);
+                    player.Move(0f, -0.1f, 0f);
                 }
                 if (Keyboard.GetState().IsKeyDown(Key.A))
                 {
-                    camera.Move(-0.1f, 0f, 0f);
+                    player.Move(-0.1f, 0f, 0f);
                 }
                 if (Keyboard.GetState().IsKeyDown(Key.D))
                 {
-                    camera.Move(0.1f, 0f, 0f);
+                    player.Move(0.1f, 0f, 0f);
                 }
                 if (Keyboard.GetState().IsKeyDown(Key.Q) || Keyboard.GetState().IsKeyDown(Key.Space))
                 {
-                    camera.Move(0f, 0f, 0.1f);
+                    player.Move(0f, 0f, 0.1f);
                 }
                 if (Keyboard.GetState().IsKeyDown(Key.E) || Keyboard.GetState().IsKeyDown(Key.ControlLeft))
                 {
-                    camera.Move(0f, 0f, -0.1f);
+                    player.Move(0f, 0f, -0.1f);
                 }
                 if (Keyboard.GetState().IsKeyDown(Key.Escape))
                 {

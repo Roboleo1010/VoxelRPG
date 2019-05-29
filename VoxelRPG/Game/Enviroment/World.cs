@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using VoxelRPG.Utilitys;
 
-namespace VoxelRPG.Game.GameWorld
+namespace VoxelRPG.Game.Enviroment
 {
     public class World
     {

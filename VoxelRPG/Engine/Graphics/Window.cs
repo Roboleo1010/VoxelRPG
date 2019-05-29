@@ -5,31 +5,35 @@ using OpenTK.Input;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
+using VoxelRPG.Engine.Graphics.Meshes;
+using VoxelRPG.Engine.Shaders;
+using VoxelRPG.Enige.Game;
 using VoxelRPG.Game;
-using VoxelRPG.Game.GameWorld;
-using VoxelRPG.Graphics.Meshes;
-using VoxelRPG.Graphics.Shaders;
+using VoxelRPG.Game.Entity;
+using VoxelRPG.Game.Enviroment;
 using VoxelRPG.Input;
 using VoxelRPG.Utilitys;
 using static VoxelRPG.Constants.Enums.Mesh;
 
-namespace VoxelRPG.Graphics
+namespace VoxelRPG.Engine.Graphics
 {
     public class Window : GameWindow
     {
-        public Camera camera = new Camera();
-
+        #region Rendering
         int vbo_position;
         int vbo_color;
         int vbo_mview;
         int ibo_elements;
-
         Vector3[] vertdata;
         Vector3[] coldata;
         int[] indicedata;
+        #endregion
 
+        #region Game References
+        Player player;
+        List<GameObject> gameObjects = new List<GameObject>();
         List<Mesh> meshes = new List<Mesh>();
+        #endregion
 
         public Window() : base(1024, 724, new GraphicsMode(32, 24, 0, 4))
         { }
@@ -40,16 +44,6 @@ namespace VoxelRPG.Graphics
 
             InitGame();
             InitGraphics();
-
-            World w = new World();
-
-            int size = 3;
-
-            for (int x = -size; x < size; x++)
-                for (int z = -size; z < size; z++)
-                    w.GenerateChunkAt(new Vector3Int(x, 0, z));
-
-            Console.WriteLine("Generated {0} chunks", meshes.Count);
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -59,6 +53,12 @@ namespace VoxelRPG.Graphics
             GameManager.Time += (float)e.Time;
             GameManager.inputManager.ProcessInput(Focused);
 
+            Title = RenderFrequency + "";
+
+            float deltaTime = GameManager.Time - (float)e.Time;
+            foreach (GameObject g in gameObjects)
+                g.OnUpdate(deltaTime);
+
             //TODO CACHE!
             List<Vector3> verts = new List<Vector3>();
             List<int> inds = new List<int>();
@@ -67,9 +67,9 @@ namespace VoxelRPG.Graphics
             int vertcount = 0;
             foreach (Mesh m in meshes)
             {
-                verts.AddRange(m.GetVertices().ToList());
-                inds.AddRange(m.GetIndices(vertcount).ToList());
-                colors.AddRange(m.GetColors().ToList());
+                verts.AddRange(m.GetVertices());
+                inds.AddRange(m.GetIndices(vertcount));
+                colors.AddRange(m.GetColors());
                 vertcount += m.VertexCount;
             }
 
@@ -78,7 +78,7 @@ namespace VoxelRPG.Graphics
             coldata = colors.ToArray();
             //end todo
 
-            Title = RenderFrequency + "";
+
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, vbo_position);
             GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StaticDraw);
@@ -88,10 +88,13 @@ namespace VoxelRPG.Graphics
             GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(coldata.Length * Vector3.SizeInBytes), coldata, BufferUsageHint.StaticDraw);
             GL.VertexAttribPointer(ShaderInfo.Attribute_vertexColor, 3, VertexAttribPointerType.Float, true, 0, 0);
 
+            //Mesh p = meshes.ElementAt(0);
+            //p.Position = new Vector3(p.Position.X, p.Position.Y - 0.05f * GameManager.Time, p.Position.Z); /*new Vector3(0.3f, -0.5f + (float)Math.Sin(GameManager.Time), -3.0f);*/
+
             foreach (Mesh m in meshes)
             {
                 m.CalculateModelMatrix();
-                m.ViewProjectionMatrix = GameManager.window.camera.GetViewMatrix() * Matrix4.CreatePerspectiveFieldOfView(1.3f,
+                m.ViewProjectionMatrix = player.camera.GetViewMatrix() * Matrix4.CreatePerspectiveFieldOfView(1.3f,
                                          GameManager.window.ClientSize.Width / (float)GameManager.window.ClientSize.Height,
                                          Constants.Camera.NearClippingPane, Constants.Camera.FarClippingPane);
 
@@ -153,17 +156,31 @@ namespace VoxelRPG.Graphics
         void InitGame()
         {
             GameManager.window = this;
-            GameManager.inputManager = new InputManager(this, camera);
+            GameManager.world = new World();
 
+            player = new Player();
+            gameObjects.Add(player);
+            GameManager.inputManager = new InputManager(this, player);
             CursorVisible = false;
+
+            meshes.Add(new Cube()
+            {
+                Position = new Vector3(0, 30, -10)
+            });
+
+            //Generate world
+            int size = 1;
+            for (int x = -size; x < size; x++)
+                for (int z = -size; z < size; z++)
+                    GameManager.world.GenerateChunkAt(new Vector3Int(x, 0, z));
         }
 
         void InitGraphics()
         {
             ShaderInfo.ShaderProgramID = GL.CreateProgram();
 
-            ShaderHelper.LoadShader("Graphics/Shaders/vertex.glsl", ShaderType.VertexShader, ShaderInfo.ShaderProgramID, out ShaderInfo.VertexShaderID);
-            ShaderHelper.LoadShader("Graphics/Shaders/fragment.glsl", ShaderType.FragmentShader, ShaderInfo.ShaderProgramID, out ShaderInfo.FragmentShaderID);
+            ShaderHelper.LoadShader("Shaders/vertex.glsl", ShaderType.VertexShader, ShaderInfo.ShaderProgramID, out ShaderInfo.VertexShaderID);
+            ShaderHelper.LoadShader("Shaders/fragment.glsl", ShaderType.FragmentShader, ShaderInfo.ShaderProgramID, out ShaderInfo.FragmentShaderID);
 
             GL.LinkProgram(ShaderInfo.ShaderProgramID);
             Console.WriteLine(GL.GetProgramInfoLog(ShaderInfo.ShaderProgramID));
@@ -178,7 +195,7 @@ namespace VoxelRPG.Graphics
             GL.GenBuffers(1, out ibo_elements);
 
             GL.ClearColor(Color.CornflowerBlue);
-            GL.PointSize(5f);
+            GL.PointSize(8f);
         }
 
         public void AddMesh(Mesh m, MeshType type)

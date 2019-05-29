@@ -1,4 +1,4 @@
-﻿using VoxelRPG.Graphics;
+﻿using VoxelRPG.Engine.Graphics;
 
 namespace VoxelRPG
 {

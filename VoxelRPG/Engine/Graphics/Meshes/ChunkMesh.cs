@@ -2,12 +2,12 @@
 using System;
 using System.Collections.Generic;
 using VoxelRPG.Game;
-using VoxelRPG.Game.GameWorld;
+using VoxelRPG.Game.Enviroment;
 using VoxelRPG.Utilitys;
 using static VoxelRPG.Constants.Enums.Chunk;
 using static VoxelRPG.Constants.Enums.Mesh;
 
-namespace VoxelRPG.Graphics.Meshes
+namespace VoxelRPG.Engine.Graphics.Meshes
 {
     public class ChunkMesh : Mesh
     {
@@ -56,7 +56,7 @@ namespace VoxelRPG.Graphics.Meshes
                 for (int z = 0; z < Constants.World.Chunk.Size; z++)
                     for (int y = 0; y < Constants.World.Chunk.Size; y++)
                     {
-                        GetMeshData(x, y, z, chunk.blockTypes[x, y, z]);
+                        GetMeshData(x, y, z, chunk.voxels[x, y, z].Type);
                     }
 
             VertexCount = vertices.Count;
@@ -76,16 +76,24 @@ namespace VoxelRPG.Graphics.Meshes
                 z < 0 || z >= Constants.World.Chunk.Size)
                 return false;
 
-            return chunk.blockTypes[x, y, z] == BlockType.AIR;
+            return chunk.voxels[x, y, z].IsTransparent;
         }
 
         private void GetMeshData(int x, int y, int z, BlockType type)
         {
-            Vector3Int actualVoxelPosition = new Vector3Int(chunk.chunkPositionInWorld.X + x,
-                                                            chunk.chunkPositionInWorld.Y + y,
-                                                            chunk.chunkPositionInWorld.Z + z);
+            Vector3Int actualVoxelPosition = new Vector3Int(chunk.chunkWorldPos.X + x,
+                                                            chunk.chunkWorldPos.Y + y,
+                                                            chunk.chunkWorldPos.Z + z);
 
-            Vector3 color = new Vector3((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
+            Vector3 color;
+            if (type == BlockType.GRASS)
+                color = Constants.World.Chunk.Colors.Grass;
+            else if(type == BlockType.STONE)
+                color = Constants.World.Chunk.Colors.Stone;
+            else
+                color = Constants.World.Chunk.Colors.Snow;
+
+            color = new Vector3((float)(color.X + random.NextDouble() * 0.08f), (float)(color.Y + random.NextDouble() * 0.08f), (float)(color.Z + random.NextDouble() * 0.08f));
 
             bool renderFront = HasToRenderSide(x - 1, y, z);
             bool renderBack = HasToRenderSide(x + 1, y, z);

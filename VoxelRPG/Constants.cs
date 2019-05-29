@@ -1,4 +1,7 @@
-﻿using VoxelRPG.Game;
+﻿using OpenTK;
+using System.Collections.Generic;
+using VoxelRPG.Game;
+using static VoxelRPG.Constants.Enums.Chunk;
 
 namespace VoxelRPG
 {
@@ -14,7 +17,13 @@ namespace VoxelRPG
         {
             public static class Chunk
             {
-                public static readonly int Size = 64;
+                public static readonly int Size = 32;
+                public static class Colors
+                {
+                    public static Vector3 Grass = new Vector3(0.02f, 0.48f, 0.05f);
+                    public static Vector3 Stone = new Vector3(0.57f, 0.57f, 0.57f);
+                    public static Vector3 Snow = new  Vector3(0.8f, 0.8f, 0.8f);
+                }
             }
         }
 
@@ -24,7 +33,7 @@ namespace VoxelRPG
             {
                 public enum BlockType
                 {
-                    STONE, GRASS, AIR
+                    STONE, GRASS, AIR, SNOW
                 };
             }
             public static class Mesh

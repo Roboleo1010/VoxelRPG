@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace VoxelRPG.Graphics.Shaders
+namespace VoxelRPG.Engine.Shaders
 {
     public static class ShaderHelper
     {
