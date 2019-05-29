@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using VoxelRPG.Game.Enviroment;
 using VoxelRPG.Utilitys;
-using static VoxelRPG.Constants.Enums.Chunk;
+using static VoxelRPG.Constants.Enums;
 
 namespace VoxelRPG.Engine.Graphics.Meshes
 {

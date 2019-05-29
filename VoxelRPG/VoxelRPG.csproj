@@ -97,6 +97,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="Engine\Game\Components\Component.cs" />
+    <Compile Include="Engine\Game\Components\Transform.cs" />
     <Compile Include="Engine\Game\MeshGameObject.cs" />
     <Compile Include="Game\Entity\Entity.cs" />
     <Compile Include="Game\GameManager.cs" />

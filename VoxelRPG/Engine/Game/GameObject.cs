@@ -1,19 +1,52 @@
 ﻿using OpenTK;
+using System;
+using VoxelRPG.Engine.Game.Components;
 using VoxelRPG.Engine.Graphics.Meshes;
 using VoxelRPG.Game;
+using static VoxelRPG.Constants.Enums;
 
 namespace VoxelRPG.Engine.Game
 {
     public abstract class GameObject
     {
-        public Vector3 Position { get; set; }
-        public Vector3 Rotation { get; set; }
-
+        Component[] components;
         bool IsActive = true;
         string name = string.Empty;
 
-        public virtual void OnUpdate(float deltaTime)
-        { }
+        #region Component Propertys
+        public Transform Transform { get { return (Transform)GetComponent<Transform>(); } }
+        #endregion
+
+        public GameObject()
+        {
+            components = new Component[Enum.GetNames(typeof(ComponentType)).Length];
+            AddComponent<Transform>();
+        }
+
+        public void SetActive(bool newState)
+        {
+            IsActive = newState;
+        }
+
+        public override string ToString()
+        {
+            return name;
+        }
+
+        #region Virtual OnUpdate 
+        public void OnUpdate(float deltaTime)
+        {
+            for (int i = 0; i < components.Length; i++)
+                components[i].OnUpdate(deltaTime);
+
+            OnUpdateVirtual(deltaTime);
+        }
+
+        protected virtual void OnUpdateVirtual(float deltaTime)
+        {
+
+        }
+        #endregion
 
         #region Virtual GetMesh
         public Mesh GetMesh()
@@ -44,16 +77,21 @@ namespace VoxelRPG.Engine.Game
         }
         #endregion
 
-        public void SetActive(bool newState)
+        #region Components
+        public void AddComponent<T>()
         {
-            IsActive = newState;
+            components[GetEnumByType<T>()] = (Component)Activator.CreateInstance(typeof(T));
         }
 
-        public override string ToString()
+        public Component GetComponent<T>()
         {
-            return name;
+            return components[GetEnumByType<T>()];
         }
 
-
+        int GetEnumByType<T>()
+        {
+            return (int)Enum.Parse(typeof(ComponentType), typeof(T).Name);
+        }
+        #endregion
     }
 }

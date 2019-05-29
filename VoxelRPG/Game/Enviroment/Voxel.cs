@@ -1,5 +1,5 @@
 ﻿using VoxelRPG.Utilitys;
-using static VoxelRPG.Constants.Enums.Chunk;
+using static VoxelRPG.Constants.Enums;
 
 namespace VoxelRPG.Game.Enviroment
 {
