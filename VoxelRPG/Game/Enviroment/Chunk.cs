@@ -12,7 +12,7 @@ namespace VoxelRPG.Game.Enviroment
         public Vector3Int ChunkPosition;
         public Vector3Int ChunkWorldPosition;
         public Voxel[,,] Voxels = new Voxel[Constants.World.Chunk.Size, Constants.World.Chunk.Size, Constants.World.Chunk.Size];
-        public bool IsEmpty = true; //TODO
+        public bool IsEmpty = true;
         public ChunkMesh mesh;
 
         WorldGenerator generator = new WorldGenerator();
@@ -20,9 +20,7 @@ namespace VoxelRPG.Game.Enviroment
         public Chunk(Vector3Int pos)
         {
             ChunkPosition = pos;
-            ChunkWorldPosition = new Vector3Int(pos.X * Constants.World.Chunk.Size,
-                                                  pos.Y * Constants.World.Chunk.Size,
-                                                  pos.Z * Constants.World.Chunk.Size);
+            ChunkWorldPosition = WorldHelper.ConvertFromChunkSpaceToWorldSpace(pos);
         }
 
         public void Generate()
@@ -52,7 +50,8 @@ namespace VoxelRPG.Game.Enviroment
 
         public void Queue()
         {
-            GameManager.window.AddGameObject(this);
+            if (!IsEmpty)
+                GameManager.window.AddGameObject(this);
         }
 
         public Voxel GetVoxel(Vector3Int pos)

@@ -30,7 +30,7 @@ namespace VoxelRPG.Engine.Graphics
             chunkBuffer = new ChunkRenderBuffer();
             InitGame();
 
-            AddGameObject(GameObjectFactory.Cube(Vector3.Zero, Vector3.Zero, new Vector3(1, 5, 10)));          
+            AddGameObject(GameObjectFactory.Cube(Vector3.Zero, Vector3.Zero, new Vector3(1, 5, 10)));
         }
 
         //Update physics
@@ -40,14 +40,14 @@ namespace VoxelRPG.Engine.Graphics
 
             GameManager.Time += (float)e.Time;
             GameManager.inputManager.ProcessInput(Focused);
-
             Title = RenderFrequency + "";
 
-            float deltaTime = GameManager.Time - (float)e.Time;
 
+            GameManager.world.GenerateAround(GameManager.player.Transform.Position);
 
+            //Update all GameObjects
             foreach (GameObject g in chunkBuffer.GetGameObjects())
-                g.OnUpdate(deltaTime);
+                g.OnUpdate(GameManager.Time - (float)e.Time);
         }
 
         //Update Rendering

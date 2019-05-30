@@ -1,4 +1,6 @@
-﻿using System.Collections.Concurrent;
+﻿using OpenTK;
+using System;
+using System.Collections.Concurrent;
 using VoxelRPG.Utilitys;
 using static VoxelRPG.Constants.Enums;
 
@@ -12,10 +14,7 @@ namespace VoxelRPG.Game.Enviroment
 
         public void Init()
         {
-            int size = 5;
-            for (int x = -size; x < size; x++)
-                for (int z = -size; z < size; z++)
-                    GenerateChunkAt(new Vector3Int(x, 0, z));
+            GenerateChunkAt(WorldHelper.ConvertFromWorldSpaceToChunkSpace(GameManager.player.Transform.Position));
         }
 
         public Chunk GenerateChunkAt(Vector3Int position)
@@ -36,7 +35,25 @@ namespace VoxelRPG.Game.Enviroment
             return chunk;
         }
 
-        public Chunk GetChunk(Vector3Int pos)
+        public void GenerateAround(Vector3 pos)
+        {
+            Vector3Int chunkPos = WorldHelper.ConvertFromWorldSpaceToChunkSpace(pos);
+ 
+
+            int radius = 4;
+            for (int x = -radius; x < radius; x++)
+                for (int z = -radius; z < radius; z++)
+                    // if ((Math.Pow(x - chunkPos.X, 2) + Math.Pow(z - chunkPos.Z, 2)) < Math.Pow(radius, 2))  //Check if point is in circle: (x - center_x)^2 + (y - center_y)^2 < radius^2
+                    GenerateChunkAt(new Vector3Int(chunkPos.X + x, 0, chunkPos.Z + z));
+        }
+
+        public Chunk GetChunkFromWorldSpace(Vector3 pos)
+        {
+            chunks.TryGetValue(WorldHelper.ConvertFromWorldSpaceToChunkSpace(pos), out Chunk c);
+            return c;
+        }
+
+        public Chunk GetChunkFromChunkSpace(Vector3Int pos)
         {
             chunks.TryGetValue(pos, out Chunk c);
             return c;

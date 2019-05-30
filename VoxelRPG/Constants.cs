@@ -17,7 +17,7 @@ namespace VoxelRPG
         {
             public static class Chunk
             {
-                public static readonly int Size = 64;
+                public static readonly int Size = 32;
                 public static class Colors
                 {
                     public static Vector3 Grass = new Vector3(0.02f, 0.48f, 0.05f);

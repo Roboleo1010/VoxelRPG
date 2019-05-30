@@ -11,7 +11,7 @@ namespace VoxelRPG.Game.Entity
     {
         public Camera camera;
 
-        float moveSpeed = 0.2f;
+        float moveSpeed = 0.5f;
         float mouseSensitivity = 0.0025f;
 
         public Player()

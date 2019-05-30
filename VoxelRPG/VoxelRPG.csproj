@@ -105,6 +105,7 @@
     <Compile Include="Engine\Graphics\Rendering\ChunkRenderBuffer.cs" />
     <Compile Include="Engine\Graphics\Rendering\RenderBuffer.cs" />
     <Compile Include="Game\Entity\Entity.cs" />
+    <Compile Include="Game\Enviroment\WorldHelper.cs" />
     <Compile Include="Game\GameManager.cs" />
     <Compile Include="Game\Enviroment\Chunk.cs" />
     <Compile Include="Engine\Game\GameObject.cs" />

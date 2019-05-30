@@ -2,6 +2,7 @@
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
+using VoxelRPG.Engine.Diagnosatics;
 using VoxelRPG.Engine.Game;
 using VoxelRPG.Engine.Game.Components;
 using VoxelRPG.Engine.Graphics.Meshes;
@@ -84,6 +85,8 @@ namespace VoxelRPG.Engine.Graphics.Rendering
             indiceData = indices.ToArray();
             colorData = colors.ToArray();
             IsChanged = false;
+
+            Debug.LogInfo(string.Format("Recalculated Chunks. {0} vertices", vertices.Count.ToString()));
         }
 
         public override void BindBuffers()

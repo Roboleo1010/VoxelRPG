@@ -18,16 +18,14 @@ namespace VoxelRPG.Game.Entity
             Rigidbody = (Rigidbody)AddComponent<Rigidbody>(ComponentType.Rigidbody);
         }
 
-        public Chunk GetCurrentChunk()
-        {
-            return GameManager.world.GetChunk(new Vector3Int((int)(Transform.Position.X / Constants.World.Chunk.Size),
-                                                             (int)(Transform.Position.Y / Constants.World.Chunk.Size),
-                                                             (int)(Transform.Position.Z / Constants.World.Chunk.Size)));
-        }
+        //public Chunk GetCurrentChunk() TODO
+        //{
+        //    return GameManager.world.GetChunkFromWorldSpace(Transform.Position);
+        //}
 
-        public Voxel GetCurrentVoxel()
-        {
-            throw new NotImplementedException();
-        }
+        //public Voxel GetCurrentVoxel() TODO
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }
