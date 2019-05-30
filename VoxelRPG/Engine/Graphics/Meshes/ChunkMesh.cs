@@ -54,7 +54,7 @@ namespace VoxelRPG.Engine.Graphics.Meshes
                 for (int z = 0; z < Constants.World.Chunk.Size; z++)
                     for (int y = 0; y < Constants.World.Chunk.Size; y++)
                     {
-                        GetMeshData(x, y, z, chunk.voxels[x, y, z].Type);
+                        GetMeshData(x, y, z, chunk.Voxels[x, y, z].Type);
                     }
 
             VertexCount = vertices.Count;
@@ -69,14 +69,14 @@ namespace VoxelRPG.Engine.Graphics.Meshes
                 z < 0 || z >= Constants.World.Chunk.Size)
                 return false;
 
-            return chunk.voxels[x, y, z].IsTransparent;
+            return chunk.Voxels[x, y, z].IsTransparent;
         }
 
         private void GetMeshData(int x, int y, int z, BlockType type)
         {
-            Vector3Int actualVoxelPosition = new Vector3Int(chunk.chunkWorldPos.X + x,
-                                                            chunk.chunkWorldPos.Y + y,
-                                                            chunk.chunkWorldPos.Z + z);
+            Vector3Int actualVoxelPosition = new Vector3Int(chunk.ChunkWorldPosition.X + x,
+                                                            chunk.ChunkWorldPosition.Y + y,
+                                                            chunk.ChunkWorldPosition.Z + z);
 
             Vector3 color;
             if (type == BlockType.GRASS)

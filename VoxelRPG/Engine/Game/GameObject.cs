@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Reflection;
 using VoxelRPG.Engine.Game.Components;
-using VoxelRPG.Engine.Graphics.Meshes;
 using VoxelRPG.Game;
 using static VoxelRPG.Constants.Enums;
 
@@ -9,18 +7,20 @@ namespace VoxelRPG.Engine.Game
 {
     public class GameObject
     {
+        public string Name { get; set; }
+
         Component[] components;
         bool IsActive = true;
-        string name = string.Empty;
 
         #region Component Propertys
-        public Transform Transform { get { return (Transform)GetComponent(ComponentType.Transform); } }
+        public Transform Transform;
         #endregion
 
         public GameObject()
         {
+            Name = string.Empty;
             components = new Component[Enum.GetNames(typeof(ComponentType)).Length];
-            AddComponent<Transform>(ComponentType.Transform);
+            Transform = (Transform)AddComponent<Transform>(ComponentType.Transform);
         }
 
         public void SetActive(bool newState)
@@ -30,7 +30,7 @@ namespace VoxelRPG.Engine.Game
 
         public override string ToString()
         {
-            return name;
+            return Name;
         }
 
         #region Virtual OnUpdate 
@@ -66,8 +66,12 @@ namespace VoxelRPG.Engine.Game
         #region Components
         public Component AddComponent<T>(ComponentType type)
         {
-            components[(int)type] = (Component)Activator.CreateInstance(typeof(T)); //TODO: Create by string
-            return components[(int)type];
+            int index = (int)type;
+
+            components[index] = (Component)Activator.CreateInstance(typeof(T)); //TODO: Create by string
+            components[index].Parent = this;
+
+            return components[index];
         }
 
         public Component GetComponent(ComponentType type)

@@ -23,7 +23,7 @@ namespace VoxelRPG.Game.Enviroment
                 IsTransparent = true;
             else
             {
-                parentChunk.isEmpty = false;
+                parentChunk.IsEmpty = false;
                 IsTransparent = false;
                 HasCollider = true;
             }

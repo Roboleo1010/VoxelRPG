@@ -36,7 +36,7 @@ namespace VoxelRPG
 
             public enum ComponentType
             {
-                Transform, Renderer
+                Transform, Renderer, Rigidbody
             }
         }
     }

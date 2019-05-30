@@ -1,7 +1,9 @@
 ﻿using OpenTK;
 using System;
+using VoxelRPG.Engine.Diagnosatics;
 using VoxelRPG.Engine.Game.Components;
 using VoxelRPG.Engine.Graphics;
+using VoxelRPG.Game.Enviroment;
 
 namespace VoxelRPG.Game.Entity
 {
@@ -12,19 +14,17 @@ namespace VoxelRPG.Game.Entity
         float moveSpeed = 0.2f;
         float mouseSensitivity = 0.0025f;
 
-        Transform transform;
-
         public Player()
         {
             camera = new Camera(this);
-            transform = Transform;
+            // Rigidbody.SetForce(new Vector3(0, 1, 0));
         }
 
         public void Move(float x, float y, float z)
         {
             Vector3 offset = new Vector3();
 
-            Vector3 forward = new Vector3((float)Math.Sin(transform.Rotation.X), 0, (float)Math.Cos(transform.Rotation.X));
+            Vector3 forward = new Vector3((float)Math.Sin(Transform.Rotation.X), 0, (float)Math.Cos(Transform.Rotation.X));
             Vector3 right = new Vector3(-forward.Z, 0, forward.X);
 
             offset += x * right;
@@ -34,7 +34,7 @@ namespace VoxelRPG.Game.Entity
             offset.NormalizeFast();
             offset = Vector3.Multiply(offset, moveSpeed);
 
-            transform.Position += offset;
+            Transform.Position += offset;
         }
 
         public void AddRotation(float x, float y)
@@ -42,8 +42,8 @@ namespace VoxelRPG.Game.Entity
             x = x * mouseSensitivity;
             y = y * mouseSensitivity;
 
-            transform.Rotation = new Vector3((transform.Rotation.X + x) % ((float)Math.PI * 2.0f),
-                                   Math.Max(Math.Min(transform.Rotation.Y + y, (float)Math.PI / 2.0f - 0.1f),
+            Transform.Rotation = new Vector3((Transform.Rotation.X + x) % ((float)Math.PI * 2.0f),
+                                   Math.Max(Math.Min(Transform.Rotation.Y + y, (float)Math.PI / 2.0f - 0.1f),
                                    (float)-Math.PI / 2.0f + 0.1f), 0);
         }
     }

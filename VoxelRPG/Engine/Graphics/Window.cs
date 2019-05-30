@@ -5,6 +5,7 @@ using OpenTK.Input;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using VoxelRPG.Engine.Diagnosatics;
 using VoxelRPG.Engine.Game;
 using VoxelRPG.Engine.Game.Components;
 using VoxelRPG.Engine.Graphics.Meshes;
@@ -175,10 +176,14 @@ namespace VoxelRPG.Engine.Graphics
 
         void InitGame()
         {
+            Debug.Init();
+
             GameManager.window = this;
             GameManager.world = new World();
 
             player = new Player();
+            player.Transform.Position = new Vector3(0, 25, 0);
+
             gameObjects.Add(player);
             GameManager.inputManager = new InputManager(this, player);
             CursorVisible = false;
@@ -189,7 +194,7 @@ namespace VoxelRPG.Engine.Graphics
             gameObjects.Add(cube);
 
             //Generate world
-            int size = 1;
+            int size = 2;
             for (int x = -size; x < size; x++)
                 for (int z = -size; z < size; z++)
                     GameManager.world.GenerateChunkAt(new Vector3Int(x, 0, z));

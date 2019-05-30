@@ -5,7 +5,7 @@ namespace VoxelRPG.Game.Enviroment
 {
     public class World
     {
-        ConcurrentDictionary<string, Chunk> chunks = new ConcurrentDictionary<string, Chunk>();
+        ConcurrentDictionary<Vector3Int, Chunk> chunks = new ConcurrentDictionary<Vector3Int, Chunk>();
 
         public World()
         {
@@ -15,18 +15,25 @@ namespace VoxelRPG.Game.Enviroment
         public Chunk GenerateChunkAt(Vector3Int position)
         {
             Chunk chunk;
-            string chunkName = position.ToString();
 
-            if (!chunks.TryGetValue(chunkName, out chunk))
+            if (!chunks.TryGetValue(position, out chunk))
             {
                 chunk = new Chunk(position);
+                chunk.Name = "Chunk: " + position.ToString();
                 chunk.Generate();
                 chunk.Build();
                 chunk.Queue();
-                chunks.TryAdd(chunkName, chunk);
+                chunks.TryAdd(position, chunk);
             }
 
             return chunk;
         }
+
+        public Chunk GetChunk(Vector3Int pos)
+        {
+            chunks.TryGetValue(pos, out Chunk c);
+            return c;
+        }
+
     }
 }

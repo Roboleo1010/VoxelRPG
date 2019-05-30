@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\SharpFont.4.0.1\build\SharpFont.props" Condition="Exists('..\packages\SharpFont.4.0.1\build\SharpFont.props')" />
+  <Import Project="..\packages\SharpFont.Dependencies.2.6\build\SharpFont.Dependencies.props" Condition="Exists('..\packages\SharpFont.Dependencies.2.6\build\SharpFont.Dependencies.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -12,6 +14,8 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -82,6 +86,12 @@
     <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.3.0.1\lib\net20\OpenTK.dll</HintPath>
     </Reference>
+    <Reference Include="QuickFont, Version=4.5.7053.25687, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuickFont.Desktop.4.5.7053.25687\lib\net45\QuickFont.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpFont, Version=4.0.1.200, Culture=neutral, PublicKeyToken=48add4c483071cdf, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpFont.4.0.1\lib\net45\SharpFont.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -97,8 +107,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="Engine\Diagnosatics\Debug.cs" />
     <Compile Include="Engine\Game\Components\Component.cs" />
     <Compile Include="Engine\Game\Components\Renderer.cs" />
+    <Compile Include="Engine\Game\Components\Rigidbody.cs" />
     <Compile Include="Engine\Game\Components\Transform.cs" />
     <Compile Include="Game\Entity\Entity.cs" />
     <Compile Include="Game\GameManager.cs" />
@@ -116,7 +128,6 @@
     <Compile Include="Engine\Graphics\Shaders\ShaderHelper.cs" />
     <Compile Include="Engine\Graphics\Shaders\ShaderInfo.cs" />
     <Compile Include="Engine\Input\InputManager.cs" />
-    <Compile Include="Engine\Physics\PhysicsObject.cs" />
     <Compile Include="Utilitys\Libs\FastNoise.cs" />
     <Compile Include="Utilitys\Vector3Int.cs" />
     <Compile Include="Program.cs" />
@@ -125,6 +136,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Fonts\HappySans.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Shaders\vertex.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -135,6 +149,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Engine\Physics\" />
     <Folder Include="Utilitys\Extentions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -142,4 +157,11 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\SharpFont.Dependencies.2.6\build\SharpFont.Dependencies.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpFont.Dependencies.2.6\build\SharpFont.Dependencies.props'))" />
+    <Error Condition="!Exists('..\packages\SharpFont.4.0.1\build\SharpFont.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpFont.4.0.1\build\SharpFont.props'))" />
+  </Target>
 </Project>
