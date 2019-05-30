@@ -7,6 +7,7 @@ using System.Drawing;
 using VoxelRPG.Engine.Diagnosatics;
 using VoxelRPG.Engine.Game;
 using VoxelRPG.Engine.Graphics.Rendering;
+using VoxelRPG.Engine.Manager.Models;
 using VoxelRPG.Game;
 using VoxelRPG.Game.Entity;
 using VoxelRPG.Game.Enviroment;
@@ -31,6 +32,8 @@ namespace VoxelRPG.Engine.Graphics
             InitGame();
 
             AddGameObject(GameObjectFactory.Cube(Vector3.Zero, Vector3.Zero, new Vector3(1, 5, 10)));
+
+            ModelManager.Init();
         }
 
         //Update physics

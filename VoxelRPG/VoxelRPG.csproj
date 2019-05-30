@@ -102,8 +102,12 @@
     <Compile Include="Engine\Game\Components\Rigidbody.cs" />
     <Compile Include="Engine\Game\Components\Transform.cs" />
     <Compile Include="Engine\Game\GameObjectFactory.cs" />
+    <Compile Include="Engine\Manager\Models\ModelColor.cs" />
+    <Compile Include="Engine\Manager\Models\ModelManager.cs" />
     <Compile Include="Engine\Graphics\Rendering\ChunkRenderBuffer.cs" />
     <Compile Include="Engine\Graphics\Rendering\RenderBuffer.cs" />
+    <Compile Include="Engine\Manager\Models\Model.cs" />
+    <Compile Include="Engine\Manager\Models\ModelVoxel.cs" />
     <Compile Include="Game\Entity\Entity.cs" />
     <Compile Include="Game\Enviroment\WorldHelper.cs" />
     <Compile Include="Game\GameManager.cs" />
@@ -115,12 +119,13 @@
     <Compile Include="Game\Enviroment\World.cs" />
     <Compile Include="Game\Generation\WorldGenerator.cs" />
     <Compile Include="Engine\Graphics\Camera.cs" />
-    <Compile Include="Engine\Graphics\Meshes\ChunkMesh.cs" />
-    <Compile Include="Engine\Graphics\Meshes\Cube.cs" />
+    <Compile Include="Game\Graphics\Meshes\ChunkMesh.cs" />
+    <Compile Include="Game\Graphics\Meshes\Cube.cs" />
     <Compile Include="Engine\Graphics\Meshes\Mesh.cs" />
     <Compile Include="Engine\Graphics\Shaders\ShaderHelper.cs" />
     <Compile Include="Engine\Graphics\Shaders\ShaderInfo.cs" />
     <Compile Include="Engine\Input\InputManager.cs" />
+    <Compile Include="Utilitys\FileUtility.cs" />
     <Compile Include="Utilitys\Libs\FastNoise.cs" />
     <Compile Include="Utilitys\Vector3Int.cs" />
     <Compile Include="Program.cs" />
@@ -129,9 +134,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Fonts\HappySans.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="Shaders\vertex.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -141,9 +143,11 @@
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Engine\Physics\" />
-    <Folder Include="Utilitys\Extentions\" />
+    <None Include="GameData\Models\Tulip.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

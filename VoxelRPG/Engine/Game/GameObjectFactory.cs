@@ -1,6 +1,6 @@
 ﻿using OpenTK;
 using VoxelRPG.Engine.Game.Components;
-using VoxelRPG.Engine.Graphics.Meshes;
+using VoxelRPG.Game.Graphics.Meshes;
 using static VoxelRPG.Constants.Enums;
 
 namespace VoxelRPG.Engine.Game

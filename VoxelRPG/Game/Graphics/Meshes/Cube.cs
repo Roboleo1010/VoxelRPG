@@ -1,6 +1,7 @@
 ﻿using OpenTK;
+using VoxelRPG.Engine.Graphics.Meshes;
 
-namespace VoxelRPG.Engine.Graphics.Meshes
+namespace VoxelRPG.Game.Graphics.Meshes
 {
     class Cube : Mesh
     {

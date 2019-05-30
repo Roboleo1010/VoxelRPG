@@ -1,11 +1,11 @@
 ﻿using OpenTK;
-using System;
 using System.Collections.Generic;
+using VoxelRPG.Engine.Graphics.Meshes;
 using VoxelRPG.Game.Enviroment;
 using VoxelRPG.Utilitys;
 using static VoxelRPG.Constants.Enums;
 
-namespace VoxelRPG.Engine.Graphics.Meshes
+namespace VoxelRPG.Game.Graphics.Meshes
 {
     public class ChunkMesh : Mesh
     {
@@ -14,13 +14,11 @@ namespace VoxelRPG.Engine.Graphics.Meshes
         public List<int> indices = new List<int>();
 
         Chunk chunk;
-        Random random;
 
         public ChunkMesh(Chunk c)
         {
             chunk = c;
             Transform = chunk.Transform;
-            random = new Random();
         }
 
         public override Vector3[] GetVertices()
@@ -55,7 +53,7 @@ namespace VoxelRPG.Engine.Graphics.Meshes
                 for (int z = 0; z < Constants.World.Chunk.Size; z++)
                     for (int y = 0; y < Constants.World.Chunk.Size; y++)
                     {
-                        GetMeshData(x, y, z, chunk.Voxels[x, y, z].Type);
+                        GetMeshData(x, y, z, chunk.Voxels[x, y, z]);
                     }
 
             VertexCount = vertices.Count;
@@ -73,21 +71,11 @@ namespace VoxelRPG.Engine.Graphics.Meshes
             return chunk.Voxels[x, y, z].IsTransparent;
         }
 
-        private void GetMeshData(int x, int y, int z, BlockType type)
+        private void GetMeshData(int x, int y, int z, Voxel voxel)
         {
             Vector3Int actualVoxelPosition = new Vector3Int(chunk.ChunkWorldPosition.X + x,
                                                             chunk.ChunkWorldPosition.Y + y,
                                                             chunk.ChunkWorldPosition.Z + z);
-
-            Vector3 color;
-            if (type == BlockType.GRASS)
-                color = Constants.World.Chunk.Colors.Grass;
-            else if (type == BlockType.STONE)
-                color = Constants.World.Chunk.Colors.Stone;
-            else
-                color = Constants.World.Chunk.Colors.Snow;
-
-            color = new Vector3((float)(color.X + random.NextDouble() * 0.08f), (float)(color.Y + random.NextDouble() * 0.08f), (float)(color.Z + random.NextDouble() * 0.08f));
 
             bool renderFront = HasToRenderSide(x - 1, y, z);
             bool renderBack = HasToRenderSide(x + 1, y, z);
@@ -96,7 +84,7 @@ namespace VoxelRPG.Engine.Graphics.Meshes
             bool renderTop = HasToRenderSide(x, y + 1, z);
             bool renderBottom = HasToRenderSide(x, y - 1, z);
 
-            if (type != BlockType.AIR && (renderFront == true || renderBack == true || renderLeft == true ||
+            if (voxel.Type != BlockType.AIR && (renderFront == true || renderBack == true || renderLeft == true ||
                                           renderRight == true || renderTop == true || renderBottom == true))
             {
                 chunk.IsEmpty = false;
@@ -116,7 +104,7 @@ namespace VoxelRPG.Engine.Graphics.Meshes
                 vertices.Add(new Vector3(0f + actualVoxelPosition.X, 1f + actualVoxelPosition.Y, 1f + actualVoxelPosition.Z));
 
                 for (int i = 0; i < 8; i++)
-                    colors.Add(color);
+                    colors.Add(voxel.Color);
 
                 if (renderFront)
                     indices.AddRange(new int[] { vOffset + 0, vOffset + 7, vOffset + 3, vOffset + 0, vOffset + 4, vOffset + 7 }); //front

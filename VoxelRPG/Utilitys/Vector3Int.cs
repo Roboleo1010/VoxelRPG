@@ -1,4 +1,5 @@
-﻿using OpenTK;
+﻿using Newtonsoft.Json;
+using OpenTK;
 
 namespace VoxelRPG.Utilitys
 {
@@ -8,6 +9,7 @@ namespace VoxelRPG.Utilitys
         public int Y { get; set; }
         public int Z { get; set; }
 
+        [JsonConstructor]
         public Vector3Int(int x, int y, int z)
         {
             X = x;
