@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenTK;
+using System;
 
 namespace VoxelRPG.Engine.Diagnosatics
 {
@@ -7,6 +8,13 @@ namespace VoxelRPG.Engine.Diagnosatics
         private static readonly ConsoleColor defaultColor = ConsoleColor.White;
 
         public static void Init() { }
+
+        public static void DrawLine(Vector3 origin, float length)
+        {
+
+        }
+
+        #region Logging
         public static void LogInfo(object message) => Log(message.ToString(), ConsoleColor.White);
 
         public static void LogWaring(object message) => Log(message.ToString(), ConsoleColor.Yellow);
@@ -21,5 +29,6 @@ namespace VoxelRPG.Engine.Diagnosatics
             Console.WriteLine("[{0}]: {1}", DateTime.Now.ToString("H:mm:ss:fff"), message);
             Console.ForegroundColor = defaultColor;
         }
+        #endregion
     }
 }

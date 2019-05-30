@@ -1,12 +1,15 @@
 ﻿using OpenTK;
+using VoxelRPG.Engine.Game.Components;
 
 namespace VoxelRPG.Engine.Graphics.Meshes
 {
     public abstract class Mesh
     {
-        public Vector3 Position = Vector3.Zero;
-        public Vector3 Rotation = Vector3.Zero;
-        public Vector3 Scale = Vector3.One;
+        //public Vector3 Position = Vector3.Zero;
+        //public Vector3 Rotation = Vector3.Zero;
+        //public Vector3 Scale = Vector3.One;
+
+        public Transform Transform;
 
         public int VertexCount;
         public int IndiceCount;
