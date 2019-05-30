@@ -102,6 +102,7 @@
     <Compile Include="Engine\Game\Components\Rigidbody.cs" />
     <Compile Include="Engine\Game\Components\Transform.cs" />
     <Compile Include="Engine\Game\GameObjectFactory.cs" />
+    <Compile Include="Engine\Graphics\Rendering\ChunkRenderBuffer.cs" />
     <Compile Include="Engine\Graphics\Rendering\RenderBuffer.cs" />
     <Compile Include="Game\Entity\Entity.cs" />
     <Compile Include="Game\GameManager.cs" />

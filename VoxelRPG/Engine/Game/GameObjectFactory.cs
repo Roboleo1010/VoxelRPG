@@ -10,6 +10,7 @@ namespace VoxelRPG.Engine.Game
         public static GameObject Cube(Vector3 pos, Vector3 rot, Vector3 scale)
         {
             GameObject cube = new GameObject();
+            cube.Type = GameObjectType.ENVIROMENT;
             cube.Transform.Position = pos;
             cube.Transform.Rotation = rot;
             cube.Transform.Scale = scale;

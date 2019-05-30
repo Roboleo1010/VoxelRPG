@@ -7,7 +7,8 @@ namespace VoxelRPG.Engine.Game
 {
     public class GameObject
     {
-        public string Name { get; set; }
+        public string Name;
+        public GameObjectType Type;
 
         Component[] components;
         bool IsActive = true;

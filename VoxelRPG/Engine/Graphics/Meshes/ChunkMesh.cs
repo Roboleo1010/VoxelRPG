@@ -44,9 +44,9 @@ namespace VoxelRPG.Engine.Graphics.Meshes
             return colors.ToArray();
         }
 
-        public override void CalculateModelMatrix()
+        public override Matrix4 CalculateModelMatrix()
         {
-            ModelMatrix = Matrix4.CreateScale(Transform.Scale) * Matrix4.CreateRotationX(Transform.Rotation.X) * Matrix4.CreateRotationY(Transform.Rotation.Y) * Matrix4.CreateRotationZ(Transform.Rotation.Z) * Matrix4.CreateTranslation(Transform.Position);
+            return Matrix4.CreateScale(Transform.Scale) * Matrix4.CreateRotationX(Transform.Rotation.X) * Matrix4.CreateRotationY(Transform.Rotation.Y) * Matrix4.CreateRotationZ(Transform.Rotation.Z) * Matrix4.CreateTranslation(Transform.Position);
         }
 
         public void Build()

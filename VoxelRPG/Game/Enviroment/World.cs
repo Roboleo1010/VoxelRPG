@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using VoxelRPG.Utilitys;
+using static VoxelRPG.Constants.Enums;
 
 namespace VoxelRPG.Game.Enviroment
 {
@@ -11,7 +12,7 @@ namespace VoxelRPG.Game.Enviroment
 
         public void Init()
         {
-            int size = 3;
+            int size = 5;
             for (int x = -size; x < size; x++)
                 for (int z = -size; z < size; z++)
                     GenerateChunkAt(new Vector3Int(x, 0, z));
@@ -24,6 +25,7 @@ namespace VoxelRPG.Game.Enviroment
             if (!chunks.TryGetValue(position, out chunk))
             {
                 chunk = new Chunk(position);
+                chunk.Type = GameObjectType.ENVIROMENT;
                 chunk.Name = "Chunk: " + position.ToString();
                 chunk.Generate();
                 chunk.Build();

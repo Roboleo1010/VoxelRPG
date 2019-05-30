@@ -3,7 +3,6 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using VoxelRPG.Engine.Diagnosatics;
 using VoxelRPG.Engine.Game;
@@ -12,15 +11,13 @@ using VoxelRPG.Game;
 using VoxelRPG.Game.Entity;
 using VoxelRPG.Game.Enviroment;
 using VoxelRPG.Input;
+using static VoxelRPG.Constants.Enums;
 
 namespace VoxelRPG.Engine.Graphics
 {
     public class Window : GameWindow
     {
-        Player player;
-        List<GameObject> gameObjects = new List<GameObject>();
-
-        RenderBuffer meshRendering;
+        ChunkRenderBuffer chunkBuffer;
 
         public Window() : base(1024, 724, new GraphicsMode(32, 24, 0, 4))
         { }
@@ -29,12 +26,11 @@ namespace VoxelRPG.Engine.Graphics
         {
             base.OnLoad(e);
 
-            InitGame();
             InitGraphics();
+            chunkBuffer = new ChunkRenderBuffer();
+            InitGame();
 
-            gameObjects.Add(GameObjectFactory.Cube(Vector3.Zero, Vector3.Zero, new Vector3(1, 5, 10)));
-
-            meshRendering = new RenderBuffer(gameObjects);
+            AddGameObject(GameObjectFactory.Cube(Vector3.Zero, Vector3.Zero, new Vector3(1, 5, 10)));          
         }
 
         //Update physics
@@ -48,7 +44,9 @@ namespace VoxelRPG.Engine.Graphics
             Title = RenderFrequency + "";
 
             float deltaTime = GameManager.Time - (float)e.Time;
-            foreach (GameObject g in gameObjects)
+
+
+            foreach (GameObject g in chunkBuffer.GetGameObjects())
                 g.OnUpdate(deltaTime);
         }
 
@@ -61,9 +59,9 @@ namespace VoxelRPG.Engine.Graphics
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.Enable(EnableCap.DepthTest);
 
-            meshRendering.GatherData();
-            meshRendering.BindBuffers();
-            meshRendering.Render();
+            chunkBuffer.GatherData();
+            chunkBuffer.BindBuffers();
+            chunkBuffer.Render();
 
             GL.Flush();
             SwapBuffers();
@@ -92,7 +90,7 @@ namespace VoxelRPG.Engine.Graphics
 
             GameManager.window = this;
             GameManager.world = new World();
-            player = new Player();
+            Player player = new Player();
             player.Transform.Position = new Vector3(0, 25, 0);
             GameManager.player = player;
 
@@ -108,15 +106,31 @@ namespace VoxelRPG.Engine.Graphics
             CursorVisible = false;
         }
 
-        #region GameObject Helper
+        #region GameObject management
         public void AddGameObject(GameObject o)
         {
-            gameObjects.Add(o);
+            switch (o.Type)
+            {
+                case GameObjectType.ENVIROMENT:
+                    chunkBuffer.AddGameObject(o);
+                    break;
+                default:
+                    Debug.LogError("Object type not known");
+                    break;
+            }
         }
 
         public void RemoveGameObject(GameObject o)
         {
-            gameObjects.Remove(o);
+            switch (o.Type)
+            {
+                case GameObjectType.ENVIROMENT:
+                    chunkBuffer.RemoveGameObject(o);
+                    break;
+                default:
+                    Debug.LogError("Object type not known");
+                    break;
+            }
         }
         #endregion
     }
