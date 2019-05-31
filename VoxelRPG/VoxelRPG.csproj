@@ -109,6 +109,7 @@
     <Compile Include="Engine\Manager\Models\Model.cs" />
     <Compile Include="Engine\Manager\Models\ModelVoxel.cs" />
     <Compile Include="Game\Entity\Entity.cs" />
+    <Compile Include="Game\Enviroment\vector3int.cs" />
     <Compile Include="Game\Enviroment\WorldHelper.cs" />
     <Compile Include="Game\GameManager.cs" />
     <Compile Include="Game\Enviroment\Chunk.cs" />
@@ -119,7 +120,7 @@
     <Compile Include="Game\Enviroment\World.cs" />
     <Compile Include="Game\Generation\WorldGenerator.cs" />
     <Compile Include="Engine\Graphics\Camera.cs" />
-    <Compile Include="Game\Graphics\Meshes\ChunkMesh.cs" />
+    <Compile Include="Game\Graphics\Meshes\VoxelMesh.cs" />
     <Compile Include="Game\Graphics\Meshes\Cube.cs" />
     <Compile Include="Engine\Graphics\Meshes\Mesh.cs" />
     <Compile Include="Engine\Graphics\Shaders\ShaderHelper.cs" />

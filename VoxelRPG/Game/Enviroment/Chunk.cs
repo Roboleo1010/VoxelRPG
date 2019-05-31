@@ -1,4 +1,5 @@
-﻿using VoxelRPG.Engine.Game;
+﻿using OpenTK;
+using VoxelRPG.Engine.Game;
 using VoxelRPG.Engine.Game.Components;
 using VoxelRPG.Game.Generation;
 using VoxelRPG.Game.Graphics.Meshes;
@@ -9,31 +10,28 @@ namespace VoxelRPG.Game.Enviroment
 {
     public class Chunk : GameObject
     {
-        public Vector3Int ChunkPosition;
-        public Vector3Int ChunkWorldPosition;
         public Voxel[,,] Voxels = new Voxel[Constants.World.Chunk.Size, Constants.World.Chunk.Size, Constants.World.Chunk.Size];
         public bool IsEmpty = true;
-        public ChunkMesh mesh;
-
-        WorldGenerator generator = new WorldGenerator();
+        public VoxelMesh mesh;
 
         public Chunk(Vector3Int pos)
         {
-            ChunkPosition = pos;
-            ChunkWorldPosition = WorldHelper.ConvertFromChunkSpaceToWorldSpace(pos);
+            Vector3Int chunkWorldPos = WorldHelper.ConvertFromChunkSpaceToWorldSpace(pos);
+            Transform.Position = new Vector3(chunkWorldPos.X, chunkWorldPos.Y, chunkWorldPos.Z);
         }
 
         public void Generate()
         {
             Vector3Int voxelWorldPos;
+            WorldGenerator generator = new WorldGenerator();
 
             for (int x = 0; x < Constants.World.Chunk.Size; x++)
                 for (int z = 0; z < Constants.World.Chunk.Size; z++)
                 {
-                    int height = generator.GetHeight(x + ChunkWorldPosition.X, z + ChunkWorldPosition.Z);
+                    int height = generator.GetHeight(x + Transform.RoundedPosition.X, z + Transform.RoundedPosition.Z);
                     for (int y = 0; y < Constants.World.Chunk.Size; y++)
                     {
-                        voxelWorldPos = new Vector3Int(ChunkWorldPosition.X + x, ChunkWorldPosition.Y + y, ChunkWorldPosition.Z + z);
+                        voxelWorldPos = new Vector3Int(Transform.RoundedPosition.X + x, Transform.RoundedPosition.Y + y, Transform.RoundedPosition.Z + z);
                         Voxels[x, y, z] = new Voxel(voxelWorldPos, generator.GetBlockType(voxelWorldPos, height), this);
                     }
                 }
@@ -41,7 +39,7 @@ namespace VoxelRPG.Game.Enviroment
 
         public void Build()
         {
-            mesh = new ChunkMesh(this);
+            mesh = new VoxelMesh(this, Voxels);
             mesh.Build();
 
             Renderer renderer = (Renderer)AddComponent<Renderer>(ComponentType.Renderer);

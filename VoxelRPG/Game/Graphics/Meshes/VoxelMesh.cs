@@ -1,5 +1,7 @@
 ﻿using OpenTK;
 using System.Collections.Generic;
+using VoxelRPG.Engine.Game;
+using VoxelRPG.Engine.Game.Components;
 using VoxelRPG.Engine.Graphics.Meshes;
 using VoxelRPG.Game.Enviroment;
 using VoxelRPG.Utilitys;
@@ -7,18 +9,18 @@ using static VoxelRPG.Constants.Enums;
 
 namespace VoxelRPG.Game.Graphics.Meshes
 {
-    public class ChunkMesh : Mesh
+    public class VoxelMesh : Mesh
     {
         public List<Vector3> vertices = new List<Vector3>();
         public List<Vector3> colors = new List<Vector3>();
         public List<int> indices = new List<int>();
 
-        Chunk chunk;
+        Voxel[,,] voxels;
 
-        public ChunkMesh(Chunk c)
+        public VoxelMesh(GameObject go, Voxel[,,] v)
         {
-            chunk = c;
-            Transform = chunk.Transform;
+            Transform = go.Transform;
+            voxels = v;
         }
 
         public override Vector3[] GetVertices()
@@ -53,7 +55,7 @@ namespace VoxelRPG.Game.Graphics.Meshes
                 for (int z = 0; z < Constants.World.Chunk.Size; z++)
                     for (int y = 0; y < Constants.World.Chunk.Size; y++)
                     {
-                        GetMeshData(x, y, z, chunk.Voxels[x, y, z]);
+                        GetMeshData(x, y, z, voxels[x, y, z]);
                     }
 
             VertexCount = vertices.Count;
@@ -68,15 +70,11 @@ namespace VoxelRPG.Game.Graphics.Meshes
                 z < 0 || z >= Constants.World.Chunk.Size)
                 return false;
 
-            return chunk.Voxels[x, y, z].IsTransparent;
+            return voxels[x, y, z].IsTransparent;
         }
 
         private void GetMeshData(int x, int y, int z, Voxel voxel)
         {
-            Vector3Int actualVoxelPosition = new Vector3Int(chunk.ChunkWorldPosition.X + x,
-                                                            chunk.ChunkWorldPosition.Y + y,
-                                                            chunk.ChunkWorldPosition.Z + z);
-
             bool renderFront = HasToRenderSide(x - 1, y, z);
             bool renderBack = HasToRenderSide(x + 1, y, z);
             bool renderLeft = HasToRenderSide(x, y, z - 1);
@@ -87,21 +85,21 @@ namespace VoxelRPG.Game.Graphics.Meshes
             if (voxel.Type != BlockType.AIR && (renderFront == true || renderBack == true || renderLeft == true ||
                                           renderRight == true || renderTop == true || renderBottom == true))
             {
-                chunk.IsEmpty = false;
+                //chunk.IsEmpty = false; TODO
 
                 int vOffset = vertices.Count;
 
                 //Bottom
-                vertices.Add(new Vector3(0f + actualVoxelPosition.X, 0f + actualVoxelPosition.Y, 0f + actualVoxelPosition.Z));
-                vertices.Add(new Vector3(1f + actualVoxelPosition.X, 0f + actualVoxelPosition.Y, 0f + actualVoxelPosition.Z));
-                vertices.Add(new Vector3(1f + actualVoxelPosition.X, 1f + actualVoxelPosition.Y, 0f + actualVoxelPosition.Z));
-                vertices.Add(new Vector3(0f + actualVoxelPosition.X, 1f + actualVoxelPosition.Y, 0f + actualVoxelPosition.Z));
+                vertices.Add(new Vector3(0f + x, 0f + y, 0f + z));
+                vertices.Add(new Vector3(1f + x, 0f + y, 0f + z));
+                vertices.Add(new Vector3(1f + x, 1f + y, 0f + z));
+                vertices.Add(new Vector3(0f + x, 1f + y, 0f + z));
 
-                //Top
-                vertices.Add(new Vector3(0f + actualVoxelPosition.X, 0f + actualVoxelPosition.Y, 1f + actualVoxelPosition.Z));
-                vertices.Add(new Vector3(1f + actualVoxelPosition.X, 0f + actualVoxelPosition.Y, 1f + actualVoxelPosition.Z));
-                vertices.Add(new Vector3(1f + actualVoxelPosition.X, 1f + actualVoxelPosition.Y, 1f + actualVoxelPosition.Z));
-                vertices.Add(new Vector3(0f + actualVoxelPosition.X, 1f + actualVoxelPosition.Y, 1f + actualVoxelPosition.Z));
+                //Top                                 
+                vertices.Add(new Vector3(0f + x, 0f + y, 1f + z));
+                vertices.Add(new Vector3(1f + x, 0f + y, 1f + z));
+                vertices.Add(new Vector3(1f + x, 1f + y, 1f + z));
+                vertices.Add(new Vector3(0f + x, 1f + y, 1f + z));
 
                 for (int i = 0; i < 8; i++)
                     colors.Add(voxel.Color);
