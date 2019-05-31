@@ -29,11 +29,6 @@ namespace VoxelRPG
 
         public static class Enums
         {
-            public enum BlockType
-            {
-                STONE, GRASS, AIR, SNOW
-            };
-
             public enum ComponentType
             {
                 Transform, Renderer, Rigidbody

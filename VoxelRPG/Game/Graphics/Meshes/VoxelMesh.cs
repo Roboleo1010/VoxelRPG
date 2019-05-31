@@ -17,9 +17,8 @@ namespace VoxelRPG.Game.Graphics.Meshes
 
         Voxel[,,] voxels;
 
-        public VoxelMesh(GameObject go, Voxel[,,] v)
+        public VoxelMesh(Voxel[,,] v)
         {
-            Transform = go.Transform;
             voxels = v;
         }
 
@@ -70,7 +69,7 @@ namespace VoxelRPG.Game.Graphics.Meshes
                 z < 0 || z >= Constants.World.Chunk.Size)
                 return false;
 
-            return voxels[x, y, z].IsTransparent;
+            return voxels[x, y, z] == null;
         }
 
         private void GetMeshData(int x, int y, int z, Voxel voxel)
@@ -82,11 +81,9 @@ namespace VoxelRPG.Game.Graphics.Meshes
             bool renderTop = HasToRenderSide(x, y + 1, z);
             bool renderBottom = HasToRenderSide(x, y - 1, z);
 
-            if (voxel.Type != BlockType.AIR && (renderFront == true || renderBack == true || renderLeft == true ||
+            if (voxel != null && (renderFront == true || renderBack == true || renderLeft == true ||
                                           renderRight == true || renderTop == true || renderBottom == true))
             {
-                //chunk.IsEmpty = false; TODO
-
                 int vOffset = vertices.Count;
 
                 //Bottom

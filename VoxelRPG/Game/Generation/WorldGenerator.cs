@@ -1,7 +1,6 @@
-﻿using System;
+﻿using VoxelRPG.Game.Enviroment;
 using VoxelRPG.Libs.Noise;
 using VoxelRPG.Utilitys;
-using static VoxelRPG.Constants.Enums;
 
 namespace VoxelRPG.Game.Generation
 {
@@ -21,17 +20,16 @@ namespace VoxelRPG.Game.Generation
             return (int)height;
         }
 
-        public BlockType GetBlockType(Vector3Int pos, int height)
+        public Voxel GetVoxel(Vector3Int posInWorld, Vector3Int posInChunk, int height)
         {
-            if (pos.Y > height)
-                return BlockType.AIR;
-            else if (pos.Y > 20)
-                return BlockType.SNOW;
-            else if (pos.Y > 5)
-                return BlockType.GRASS;
+            if (posInChunk.Y > height)
+                return null;
+            else if (posInChunk.Y > 20)
+                return new Voxel(posInChunk, Constants.World.Chunk.Colors.Snow);
+            else if (posInChunk.Y > 5)
+                return new Voxel(posInChunk, Constants.World.Chunk.Colors.Grass);
             else
-                return BlockType.STONE;
-
+                return new Voxel(posInChunk, Constants.World.Chunk.Colors.Stone);
         }
     }
 }

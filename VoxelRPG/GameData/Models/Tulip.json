@@ -1,1 +1,295 @@
-{"name":"Tulip","scale":0.1,"gridSize":{"x":5,"y":10,"z":4},"colors":[{"name":"stem","r":50.3647,"g":0.5884,"b":0.0705},{"name":"petals","r":0.8235,"g":0.1372,"b":0.1960},{"name":"pistil","r":0.8352,"g":0.8862,"b":0.0941}],"voxels":[{"color":"petals","x":0,"y":8,"z":2},{"color":"petals","x":0,"y":8,"z":2},{"color":"petals","x":0,"y":9,"z":2},{"color":"petals","x":1,"y":6,"z":2},{"color":"petals","x":1,"y":7,"z":1},{"color":"petals","x":1,"y":7,"z":2},{"color":"petals","x":1,"y":7,"z":3},{"color":"petals","x":1,"y":8,"z":1},{"color":"petals","x":1,"y":8,"z":3},{"color":"petals","x":1,"y":9,"z":1},{"color":"petals","x":1,"y":9,"z":3},{"color":"stem","x":2,"y":0,"z":2},{"color":"stem","x":2,"y":1,"z":2},{"color":"stem","x":2,"y":2,"z":2},{"color":"stem","x":2,"y":3,"z":2},{"color":"stem","x":2,"y":4,"z":2},{"color":"stem","x":2,"y":5,"z":2},{"color":"petals","x":2,"y":6,"z":1},{"color":"pistil","x":2,"y":6,"z":2},{"color":"petals","x":2,"y":6,"z":3},{"color":"petals","x":2,"y":7,"z":1},{"color":"pistil","x":2,"y":7,"z":2},{"color":"petals","x":2,"y":7,"z":3},{"color":"petals","x":2,"y":8,"z":0},{"color":"pistil","x":2,"y":8,"z":2},{"color":"petals","x":2,"y":8,"z":4},{"color":"petals","x":2,"y":9,"z":0},{"color":"pistil","x":2,"y":9,"z":2},{"color":"petals","x":2,"y":9,"z":4},{"color":"pistil","x":2,"y":10,"z":2},{"color":"stem","x":3,"y":3,"z":2},{"color":"petals","x":3,"y":6,"z":2},{"color":"petals","x":3,"y":7,"z":1},{"color":"petals","x":3,"y":7,"z":2},{"color":"petals","x":3,"y":7,"z":3},{"color":"petals","x":3,"y":8,"z":1},{"color":"petals","x":3,"y":8,"z":3},{"color":"petals","x":3,"y":9,"z":1},{"color":"petals","x":3,"y":9,"z":3},{"color":"stem","x":4,"y":4,"z":2},{"color":"stem","x":4,"y":5,"z":2},{"color":"petals","x":4,"y":8,"z":2},{"color":"petals","x":4,"y":9,"z":2},{"color":"stem","x":5,"y":5,"z":2}]}
+{
+  "name": "Tulip",
+  "scale": 0.1,
+  "gridSize": {
+    "x": 5,
+    "y": 10,
+    "z": 4
+  },
+  "colors": [
+    {
+      "name": "stem",
+      "r": 50.3647,
+      "g": 0.5884,
+      "b": 0.0705
+    },
+    {
+      "name": "petals",
+      "r": 0.8235,
+      "g": 0.1372,
+      "b": 0.1960
+    },
+    {
+      "name": "pistil",
+      "r": 0.8352,
+      "g": 0.8862,
+      "b": 0.0941
+    }
+  ],
+  "voxels": [
+    {
+      "color": "petals",
+      "x": 0,
+      "y": 8,
+      "z": 2
+    },
+    {
+      "color": "petals",
+      "x": 0,
+      "y": 8,
+      "z": 2
+    },
+    {
+      "color": "petals",
+      "x": 0,
+      "y": 9,
+      "z": 2
+    },
+    {
+      "color": "petals",
+      "x": 1,
+      "y": 6,
+      "z": 2
+    },
+    {
+      "color": "petals",
+      "x": 1,
+      "y": 7,
+      "z": 1
+    },
+    {
+      "color": "petals",
+      "x": 1,
+      "y": 7,
+      "z": 2
+    },
+    {
+      "color": "petals",
+      "x": 1,
+      "y": 7,
+      "z": 3
+    },
+    {
+      "color": "petals",
+      "x": 1,
+      "y": 8,
+      "z": 1
+    },
+    {
+      "color": "petals",
+      "x": 1,
+      "y": 8,
+      "z": 3
+    },
+    {
+      "color": "petals",
+      "x": 1,
+      "y": 9,
+      "z": 1
+    },
+    {
+      "color": "petals",
+      "x": 1,
+      "y": 9,
+      "z": 3
+    },
+    {
+      "color": "stem",
+      "x": 2,
+      "y": 0,
+      "z": 2
+    },
+    {
+      "color": "stem",
+      "x": 2,
+      "y": 1,
+      "z": 2
+    },
+    {
+      "color": "stem",
+      "x": 2,
+      "y": 2,
+      "z": 2
+    },
+    {
+      "color": "stem",
+      "x": 2,
+      "y": 3,
+      "z": 2
+    },
+    {
+      "color": "stem",
+      "x": 2,
+      "y": 4,
+      "z": 2
+    },
+    {
+      "color": "stem",
+      "x": 2,
+      "y": 5,
+      "z": 2
+    },
+    {
+      "color": "petals",
+      "x": 2,
+      "y": 6,
+      "z": 1
+    },
+    {
+      "color": "pistil",
+      "x": 2,
+      "y": 6,
+      "z": 2
+    },
+    {
+      "color": "petals",
+      "x": 2,
+      "y": 6,
+      "z": 3
+    },
+    {
+      "color": "petals",
+      "x": 2,
+      "y": 7,
+      "z": 1
+    },
+    {
+      "color": "pistil",
+      "x": 2,
+      "y": 7,
+      "z": 2
+    },
+    {
+      "color": "petals",
+      "x": 2,
+      "y": 7,
+      "z": 3
+    },
+    {
+      "color": "petals",
+      "x": 2,
+      "y": 8,
+      "z": 0
+    },
+    {
+      "color": "pistil",
+      "x": 2,
+      "y": 8,
+      "z": 2
+    },
+    {
+      "color": "petals",
+      "x": 2,
+      "y": 8,
+      "z": 4
+    },
+    {
+      "color": "petals",
+      "x": 2,
+      "y": 9,
+      "z": 0
+    },
+    {
+      "color": "pistil",
+      "x": 2,
+      "y": 9,
+      "z": 2
+    },
+    {
+      "color": "petals",
+      "x": 2,
+      "y": 9,
+      "z": 4
+    },
+    {
+      "color": "pistil",
+      "x": 2,
+      "y": 10,
+      "z": 2
+    },
+    {
+      "color": "stem",
+      "x": 3,
+      "y": 3,
+      "z": 2
+    },
+    {
+      "color": "petals",
+      "x": 3,
+      "y": 6,
+      "z": 2
+    },
+    {
+      "color": "petals",
+      "x": 3,
+      "y": 7,
+      "z": 1
+    },
+    {
+      "color": "petals",
+      "x": 3,
+      "y": 7,
+      "z": 2
+    },
+    {
+      "color": "petals",
+      "x": 3,
+      "y": 7,
+      "z": 3
+    },
+    {
+      "color": "petals",
+      "x": 3,
+      "y": 8,
+      "z": 1
+    },
+    {
+      "color": "petals",
+      "x": 3,
+      "y": 8,
+      "z": 3
+    },
+    {
+      "color": "petals",
+      "x": 3,
+      "y": 9,
+      "z": 1
+    },
+    {
+      "color": "petals",
+      "x": 3,
+      "y": 9,
+      "z": 3
+    },
+    {
+      "color": "stem",
+      "x": 4,
+      "y": 4,
+      "z": 2
+    },
+    {
+      "color": "stem",
+      "x": 4,
+      "y": 5,
+      "z": 2
+    },
+    {
+      "color": "petals",
+      "x": 4,
+      "y": 8,
+      "z": 2
+    },
+    {
+      "color": "petals",
+      "x": 4,
+      "y": 9,
+      "z": 2
+    },
+    {
+      "color": "stem",
+      "x": 5,
+      "y": 5,
+      "z": 2
+    }
+  ]
+}

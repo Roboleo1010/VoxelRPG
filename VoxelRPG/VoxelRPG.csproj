@@ -109,7 +109,6 @@
     <Compile Include="Engine\Manager\Models\Model.cs" />
     <Compile Include="Engine\Manager\Models\ModelVoxel.cs" />
     <Compile Include="Game\Entity\Entity.cs" />
-    <Compile Include="Game\Enviroment\vector3int.cs" />
     <Compile Include="Game\Enviroment\WorldHelper.cs" />
     <Compile Include="Game\GameManager.cs" />
     <Compile Include="Game\Enviroment\Chunk.cs" />
