@@ -75,6 +75,8 @@ namespace VoxelRPG.Engine.Graphics.Rendering
                 if (m == null)
                     continue;
 
+                Debug.LogInfo(r.mesh.Transform.Position);
+
                 vertices.AddRange(m.GetVertices());
                 indices.AddRange(m.GetIndices(vertcount));
                 colors.AddRange(m.GetColors());

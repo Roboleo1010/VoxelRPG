@@ -1,5 +1,8 @@
 ﻿using OpenTK;
+using System.Linq;
 using VoxelRPG.Engine.Game.Components;
+using VoxelRPG.Engine.Graphics.Meshes;
+using VoxelRPG.Engine.Manager.Models;
 using VoxelRPG.Game.Graphics.Meshes;
 using static VoxelRPG.Constants.Enums;
 
@@ -9,18 +12,35 @@ namespace VoxelRPG.Engine.Game
     {
         public static GameObject Cube(Vector3 pos, Vector3 rot, Vector3 scale)
         {
-            GameObject cube = new GameObject();
-            cube.Type = GameObjectType.ENVIROMENT;
-            cube.Transform.Position = pos;
-            cube.Transform.Rotation = rot;
-            cube.Transform.Scale = scale;
-            Renderer r = (Renderer)cube.AddComponent<Renderer>(ComponentType.Renderer);
-            r.mesh = new Cube()
-            {
-                Transform = cube.Transform
-            };
+            GameObject gameObject = new GameObject();
+            gameObject.Type = GameObjectType.ENVIROMENT;
+            gameObject.Transform.Position = pos;
+            gameObject.Transform.Rotation = rot;
+            gameObject.Transform.Scale = scale;
+            Renderer r = (Renderer)gameObject.AddComponent<Renderer>(ComponentType.Renderer);
+            r.mesh = new CubeMesh();
+            r.mesh.Transform = gameObject.Transform;
 
-            return cube;
+            return gameObject;
+        }
+
+        public static GameObject Model(Vector3 pos, Vector3 rot, Vector3 scale, string name)
+        {
+            Model model = ModelManager.models[name];
+
+            GameObject gameObject = new GameObject();
+            gameObject.Type = GameObjectType.ENVIROMENT;
+            gameObject.Transform.Position = pos;
+            gameObject.Transform.Rotation = rot;
+            gameObject.Transform.Scale = scale;
+            Renderer r = (Renderer)gameObject.AddComponent<Renderer>(ComponentType.Renderer);
+
+            Mesh mesh = new VoxelMesh();
+            mesh.Copy(model.mesh);
+            mesh.Transform = gameObject.Transform;
+            r.mesh = mesh;
+
+            return gameObject;
         }
     }
 }

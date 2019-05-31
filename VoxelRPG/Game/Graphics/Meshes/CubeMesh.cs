@@ -1,11 +1,12 @@
 ﻿using OpenTK;
+using System;
 using VoxelRPG.Engine.Graphics.Meshes;
 
 namespace VoxelRPG.Game.Graphics.Meshes
 {
-    class Cube : Mesh
+    class CubeMesh : Mesh
     {
-        public Cube()
+        public CubeMesh()
         {
             VertexCount = 8;
             IndiceCount = 36;
@@ -73,6 +74,11 @@ namespace VoxelRPG.Game.Graphics.Meshes
         public override Matrix4 CalculateModelMatrix()
         {
             return Matrix4.CreateScale(Transform.Scale) * Matrix4.CreateRotationX(Transform.Rotation.X) * Matrix4.CreateRotationY(Transform.Rotation.Y) * Matrix4.CreateRotationZ(Transform.Rotation.Z) * Matrix4.CreateTranslation(Transform.Position);
+        }
+
+        public override void Copy(Mesh mesh)
+        {
+            throw new NotImplementedException();
         }
     }
 }

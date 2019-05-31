@@ -31,9 +31,10 @@ namespace VoxelRPG.Engine.Graphics
             chunkBuffer = new ChunkRenderBuffer();
             InitGame();
 
-            AddGameObject(GameObjectFactory.Cube(Vector3.Zero, Vector3.Zero, new Vector3(1, 5, 10)));
+            Random r = new Random();
 
-            ModelManager.Init();
+            for (int i = 0; i < 40; i++)
+                AddGameObject(GameObjectFactory.Model(new Vector3((int)((r.NextDouble() - 0.5) * 80), 0, (int)((r.NextDouble() - 0.5) * 80)), Vector3.Zero, Vector3.One, "Tulip"));
         }
 
         //Update physics
@@ -98,6 +99,8 @@ namespace VoxelRPG.Engine.Graphics
             GameManager.player = player;
 
             GameManager.inputManager = new InputManager(this, player);
+
+            ModelManager.Init();
 
             GameManager.world.Init();
         }

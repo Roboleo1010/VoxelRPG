@@ -38,7 +38,7 @@ namespace VoxelRPG.Game.Enviroment
         public void GenerateAround(Vector3 pos)
         {
             Vector3Int chunkPos = WorldHelper.ConvertFromWorldSpaceToChunkSpace(pos);
- 
+
 
             int radius = 4;
             for (int x = -radius; x < radius; x++)

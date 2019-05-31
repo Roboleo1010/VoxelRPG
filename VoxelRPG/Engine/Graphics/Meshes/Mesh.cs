@@ -15,5 +15,6 @@ namespace VoxelRPG.Engine.Graphics.Meshes
         public abstract int[] GetIndices(int offset = 0);
         public abstract Vector3[] GetColors();
         public abstract Matrix4 CalculateModelMatrix();
+        public abstract void Copy(Mesh mesh);
     }
 }

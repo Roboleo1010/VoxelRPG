@@ -1,11 +1,9 @@
 ﻿using OpenTK;
+using System;
 using System.Collections.Generic;
-using VoxelRPG.Engine.Game;
 using VoxelRPG.Engine.Game.Components;
 using VoxelRPG.Engine.Graphics.Meshes;
 using VoxelRPG.Game.Enviroment;
-using VoxelRPG.Utilitys;
-using static VoxelRPG.Constants.Enums;
 
 namespace VoxelRPG.Game.Graphics.Meshes
 {
@@ -16,10 +14,14 @@ namespace VoxelRPG.Game.Graphics.Meshes
         public List<int> indices = new List<int>();
 
         Voxel[,,] voxels;
+        bool ignoreNeighbourTransparency;
 
-        public VoxelMesh(Voxel[,,] v)
+        public VoxelMesh() { }
+
+        public VoxelMesh(Voxel[,,] v, bool ignoreNeighbourTransparency = false)
         {
             voxels = v;
+            this.ignoreNeighbourTransparency = ignoreNeighbourTransparency;
         }
 
         public override Vector3[] GetVertices()
@@ -48,14 +50,23 @@ namespace VoxelRPG.Game.Graphics.Meshes
             return Matrix4.CreateScale(Transform.Scale) * Matrix4.CreateRotationX(Transform.Rotation.X) * Matrix4.CreateRotationY(Transform.Rotation.Y) * Matrix4.CreateRotationZ(Transform.Rotation.Z) * Matrix4.CreateTranslation(Transform.Position);
         }
 
+        public override void Copy(Mesh mesh)
+        {
+            vertices.AddRange(mesh.GetVertices());
+            colors.AddRange(mesh.GetColors());
+            indices.AddRange(mesh.GetIndices());
+
+            VertexCount = vertices.Count;
+            IndiceCount = indices.Count;
+            ColorCount = vertices.Count;
+        }
+
         public void Build()
         {
-            for (int x = 0; x < Constants.World.Chunk.Size; x++)
-                for (int z = 0; z < Constants.World.Chunk.Size; z++)
-                    for (int y = 0; y < Constants.World.Chunk.Size; y++)
-                    {
+            for (int x = 0; x < voxels.GetLength(0); x++)
+                for (int y = 0; y < voxels.GetLength(1); y++)
+                    for (int z = 0; z < voxels.GetLength(2); z++)
                         GetMeshData(x, y, z, voxels[x, y, z]);
-                    }
 
             VertexCount = vertices.Count;
             IndiceCount = indices.Count;
@@ -64,10 +75,10 @@ namespace VoxelRPG.Game.Graphics.Meshes
 
         bool HasToRenderSide(int x, int y, int z)
         {
-            if (x < 0 || x >= Constants.World.Chunk.Size ||
-                y < 0 || y >= Constants.World.Chunk.Size ||
-                z < 0 || z >= Constants.World.Chunk.Size)
-                return false;
+            if (x < 0 || x >= voxels.GetLength(0) ||
+                y < 0 || y >= voxels.GetLength(1) ||
+                z < 0 || z >= voxels.GetLength(2))
+                return ignoreNeighbourTransparency;
 
             return voxels[x, y, z] == null;
         }

@@ -120,7 +120,7 @@
     <Compile Include="Game\Generation\WorldGenerator.cs" />
     <Compile Include="Engine\Graphics\Camera.cs" />
     <Compile Include="Game\Graphics\Meshes\VoxelMesh.cs" />
-    <Compile Include="Game\Graphics\Meshes\Cube.cs" />
+    <Compile Include="Game\Graphics\Meshes\CubeMesh.cs" />
     <Compile Include="Engine\Graphics\Meshes\Mesh.cs" />
     <Compile Include="Engine\Graphics\Shaders\ShaderHelper.cs" />
     <Compile Include="Engine\Graphics\Shaders\ShaderInfo.cs" />
@@ -134,6 +134,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="GameData\Models\Block.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="GameData\Models\Tulip.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Shaders\vertex.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -144,11 +150,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <None Include="GameData\Models\Tulip.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
