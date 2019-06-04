@@ -13,9 +13,8 @@ namespace VoxelRPG.Game
         public static InputManager inputManager;
         public static World world;
         public static Player player;
-        public static Random random = new Random();
-        public static WorldGenerator generator;
 
+        public static int Seed;
         public static float Time = 0;
     }
 }

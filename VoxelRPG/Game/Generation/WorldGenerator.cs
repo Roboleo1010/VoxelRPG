@@ -1,77 +1,135 @@
 ﻿using OpenTK;
 using System;
 using System.Collections.Generic;
-using VoxelRPG.Engine.Game;
+using VoxelRPG.Engine.Diagnosatics;
+using System.Diagnostics;
+using VoxelRPG.Engine.Manager.Models;
 using VoxelRPG.Game.Enviroment;
 using VoxelRPG.Libs.Noise;
 using VoxelRPG.Utilitys;
+using Debug = VoxelRPG.Engine.Diagnosatics.Debug;
 
 namespace VoxelRPG.Game.Generation
 {
     public class WorldGenerator
     {
-        FastNoise generator;
         Random random;
+        FastNoise terrainNoise;
+        FastNoise colorNoise;
 
-        public WorldGenerator(int seed)
+        Vector3Int chunkPosition;
+        Voxel[,,] voxels = new Voxel[Constants.World.Chunk.Size, Constants.World.Chunk.Height, Constants.World.Chunk.Size];
+        int[,] height = new int[Constants.World.Chunk.Size, Constants.World.Chunk.Size];
+
+        public WorldGenerator(Vector3Int pos)
         {
-            random = new Random();
-            generator = new FastNoise(seed);
-            generator.SetFrequency(0.02f); // größer = steiler, kleiner = flacher
+            chunkPosition = pos;
+
+            random = new Random(GameManager.Seed);
+            terrainNoise = new FastNoise(GameManager.Seed);
+            terrainNoise.SetFrequency(0.005f); // größer = steiler, kleiner = flacher
+
+            colorNoise = new FastNoise(-GameManager.Seed);
+            colorNoise.SetFrequency(0.05f); // größer = steiler, kleiner = flacher
         }
 
-        public Voxel[,,] Generate(Vector3Int chunkPosition)
+        public Voxel[,,] Generate()
         {
-            Voxel[,,] voxels = new Voxel[Constants.World.Chunk.Size, Constants.World.Chunk.Height, Constants.World.Chunk.Size];
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
 
-            for (int x = 0; x < Constants.World.Chunk.Size; x++)
-                for (int z = 0; z < Constants.World.Chunk.Size; z++)
-                {
-                    int height = GetHeight(x + chunkPosition.X, z + chunkPosition.Z);
+            GetHeightData();
+            GetGroundVoxels();
+            GetGridModels();
 
-                    for (int y = 0; y < Constants.World.Chunk.Height; y++)
-                        voxels[x, y, z] = GetVoxel(new Vector3Int(chunkPosition.X + x,
-                                                                  chunkPosition.Y + y,
-                                                                  chunkPosition.Z + z),
-                                                                  new Vector3Int(x, y, z),
-                                                                  height);
-                }
+            sw.Stop();
+            Debug.LogInfo("Generated in " + sw.ElapsedMilliseconds);
 
             return voxels;
         }
 
+        void GetHeightData()
+        {
+            for (int x = 0; x < Constants.World.Chunk.Size; x++)
+                for (int z = 0; z < Constants.World.Chunk.Size; z++)
+                    height[x, z] = GetHeight(x + chunkPosition.X, z + chunkPosition.Z);
+        }
+
         public int GetHeight(int x, int z)
         {
-            float height = MathUtility.Map(0, 30, -1, 1, generator.GetPerlin(x, z));
-            return (int)height;
+            return (int)MathUtility.Map(0, Constants.World.Chunk.Height - 40, -1, 1, FBM(x, z, 5, 0.5f));
         }
 
-        public void AddFlowers()
+        float FBM(float x, float z, int oct, float pers)
         {
-            float radius = 10;
-            Vector2 regionSize = new Vector2(32, 32);
-            int rejectionSamples = 10;
-            List<Vector2> points = PoissonDiscSampling.GeneratePoints(radius, regionSize, rejectionSamples);
+            float total = 0;
+            float frequency = 1;
+            float amplitude = 1;
+            float maxValue = 0;
+            for (int i = 0; i < oct; i++)
+            {
+                total += terrainNoise.GetPerlin(x * frequency, z * frequency) * amplitude;
 
-            foreach (Vector2 point in points)
-                GameManager.window.AddGameObject(GameObjectFactory.Model(new Vector3(point.X, 30, point.Y), Vector3.Zero, Vector3.One, "Tulip"));
+                maxValue += amplitude;
+
+                amplitude *= pers;
+                frequency *= 2;
+            }
+
+            return total / maxValue;
         }
 
-        public Voxel GetVoxel(Vector3Int posInWorld, Vector3Int posInChunk, int height)
+        void GetGroundVoxels()
         {
-            if (posInChunk.Y > height)
-                return null;
+            for (int x = 0; x < Constants.World.Chunk.Size; x++)
+                for (int y = 0; y < Constants.World.Chunk.Height; y++)
+                    for (int z = 0; z < Constants.World.Chunk.Size; z++)
+                    {
+                        Vector3Int posInChunk = new Vector3Int(x, y, z);
+                        Vector3Int posInWorld = new Vector3Int(chunkPosition.X + x, chunkPosition.Y + y, chunkPosition.Z + z);
+                        if (posInWorld.Y <= height[x, z])
+                            voxels[posInChunk.X, posInChunk.Y, posInChunk.Z] = new Voxel(posInWorld, GetGroundColor(posInWorld));
+                    }
+        }
 
+        Vector3 GetGroundColor(Vector3Int posInWorld)
+        {
             Vector3 color;
 
-            if (posInChunk.Y > 20)
+            if (posInWorld.Y > 170)
                 color = Constants.World.Chunk.Colors.Snow;
-            else if (posInChunk.Y > 5)
+            else if (posInWorld.Y > 60)
                 color = Constants.World.Chunk.Colors.Grass;
             else
                 color = Constants.World.Chunk.Colors.Stone;
 
-            return new Voxel(posInWorld, new Vector3((float)(color.X + random.NextDouble() * 0.08f), (float)(color.Y + random.NextDouble() * 0.08f), (float)(color.Z + random.NextDouble() * 0.08f)));
+            return GetGradiend(color, posInWorld);
+        }
+
+        void GetGridModels()
+        {
+            Model model = ModelManager.GetModel("Tulip");
+
+            float radius = Math.Max(model.gridSize.X, model.gridSize.Z) * 5;
+            Vector2 regionSize = new Vector2(Constants.World.Chunk.Size, Constants.World.Chunk.Size);
+            int rejectionSamples = 5;
+
+            List<Vector2> points = PoissonDiscSampling.GeneratePoints(radius, regionSize, random, rejectionSamples);
+
+            foreach (Vector2 point in points)
+                foreach (ModelVoxel v in model.modelVoxels)
+                {
+                    Vector3Int pos = new Vector3Int((int)point.X + v.position.X, height[(int)point.X, (int)point.Y] + v.position.Y, (int)point.Y + v.position.Z);
+                    if (pos.X >= 0 && pos.Y >= 0 && pos.Z >= 0 && pos.X < Constants.World.Chunk.Size && pos.Y < Constants.World.Chunk.Height && pos.Z < Constants.World.Chunk.Size)
+                        voxels[pos.X, pos.Y, pos.Z] = new Voxel(pos, v.color);
+                }
+        }
+
+        Vector3 GetGradiend(Vector3 color, Vector3Int position, float amount = 0.2f)
+        {
+            float gradient = MathUtility.Map(-amount, amount, -1, 1, terrainNoise.GetPerlin(position.X, position.Z));
+
+            return new Vector3(color.X + gradient, color.Y + gradient, color.Z + gradient);
         }
     }
 }

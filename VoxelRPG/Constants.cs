@@ -1,7 +1,4 @@
 ﻿using OpenTK;
-using System.Collections.Generic;
-using VoxelRPG.Game;
-using static VoxelRPG.Constants.Enums;
 
 namespace VoxelRPG
 {
@@ -9,8 +6,8 @@ namespace VoxelRPG
     {
         public static class Camera
         {
-            public static readonly float FarClippingPane = 200;
-            public static readonly float NearClippingPane = 1;
+            public static readonly float FarClippingPane = 400;
+            public static readonly float NearClippingPane = 0.5f;
         }
 
         public static class World
@@ -18,7 +15,7 @@ namespace VoxelRPG
             public static class Chunk
             {
                 public static readonly int Size = 64;
-                public static readonly int Height = 128;
+                public static readonly int Height = 256;
                 public static class Colors
                 {
                     public static Vector3 Grass = new Vector3(0.02f, 0.48f, 0.05f);

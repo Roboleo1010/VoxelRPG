@@ -1,9 +1,7 @@
 ﻿using OpenTK;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
-using VoxelRPG.Engine.Diagnosatics;
 using VoxelRPG.Utilitys;
 using static VoxelRPG.Constants.Enums;
 using Debug = VoxelRPG.Engine.Diagnosatics.Debug;

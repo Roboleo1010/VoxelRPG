@@ -13,6 +13,7 @@ using VoxelRPG.Game.Entity;
 using VoxelRPG.Game.Enviroment;
 using VoxelRPG.Game.Generation;
 using VoxelRPG.Input;
+using VoxelRPG.Utilitys;
 using static VoxelRPG.Constants.Enums;
 
 namespace VoxelRPG.Engine.Graphics
@@ -93,11 +94,15 @@ namespace VoxelRPG.Engine.Graphics
             GameManager.window = this;
             GameManager.world = new World();
             Player player = new Player();
-            player.Transform.Position = new Vector3(0, 25, 0);
+
+            WorldGenerator generator = new WorldGenerator(new Vector3Int(0, 0, 0));
+            player.Transform.Position = new Vector3(0, generator.GetHeight(0, 0) + 3, 0);
             GameManager.player = player;
             GameManager.inputManager = new InputManager(this, player);
             ModelManager.Init();
-            GameManager.generator = new WorldGenerator(GameManager.random.Next(int.MinValue, int.MaxValue));
+
+            GameManager.Seed = new Random().Next(int.MinValue, int.MaxValue);
+
             GameManager.world.Init();
         }
 

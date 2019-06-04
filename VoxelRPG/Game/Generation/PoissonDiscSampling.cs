@@ -7,10 +7,8 @@ namespace VoxelRPG.Game.Generation
 {
     public static class PoissonDiscSampling
     {
-        public static List<Vector2> GeneratePoints(float radius, Vector2 sampleRegionSize, int numSamplesBeforeRejection = 30)
+        public static List<Vector2> GeneratePoints(float radius, Vector2 sampleRegionSize, Random random, int numSamplesBeforeRejection = 30)
         {
-            Random random = new Random();
-
             float cellSize = radius / (float)Math.Sqrt(2);
 
             int[,] grid = new int[(int)Math.Ceiling(sampleRegionSize.X / cellSize), (int)Math.Ceiling(sampleRegionSize.Y / cellSize)];

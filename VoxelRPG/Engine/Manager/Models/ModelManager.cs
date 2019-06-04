@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using VoxelRPG.Engine.Diagnosatics;
 using VoxelRPG.Utilitys;
 
 namespace VoxelRPG.Engine.Manager.Models
@@ -21,6 +22,17 @@ namespace VoxelRPG.Engine.Manager.Models
             m.Build();
 
             models.Add(m.name, m);
+        }
+
+        public static Model GetModel(string name)
+        {
+            Model model;
+
+            if (models.TryGetValue(name, out model))
+                return model;
+
+            Debug.LogError("No model with name: " + name + " found");
+            return null;
         }
     }
 }

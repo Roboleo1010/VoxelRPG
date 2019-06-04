@@ -22,9 +22,8 @@ namespace VoxelRPG.Game.Enviroment
 
         public void Generate()
         {
-            WorldGenerator g = new WorldGenerator(1);
-
-            voxels = g.Generate(Transform.RoundedPosition); //GameManager.generator.
+            WorldGenerator generator = new WorldGenerator(Transform.RoundedPosition);
+            voxels = generator.Generate();
         }
 
         public void Build()
