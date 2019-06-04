@@ -2,6 +2,7 @@
 using VoxelRPG.Engine.Graphics;
 using VoxelRPG.Game.Entity;
 using VoxelRPG.Game.Enviroment;
+using VoxelRPG.Game.Generation;
 using VoxelRPG.Input;
 
 namespace VoxelRPG.Game
@@ -12,7 +13,8 @@ namespace VoxelRPG.Game
         public static InputManager inputManager;
         public static World world;
         public static Player player;
-        public static Random Random = new Random();
+        public static Random random = new Random();
+        public static WorldGenerator generator;
 
         public static float Time = 0;
     }

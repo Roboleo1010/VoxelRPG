@@ -2,6 +2,8 @@
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using VoxelRPG.Engine.Diagnosatics;
 using VoxelRPG.Engine.Game;
 using VoxelRPG.Engine.Game.Components;
@@ -9,19 +11,22 @@ using VoxelRPG.Engine.Graphics.Meshes;
 using VoxelRPG.Engine.Shaders;
 using VoxelRPG.Game;
 using static VoxelRPG.Constants.Enums;
+using Debug = VoxelRPG.Engine.Diagnosatics.Debug;
 
 namespace VoxelRPG.Engine.Graphics.Rendering
 {
     public class ChunkRenderBuffer : RenderBuffer
     {
+        List<GameObject> gameObjects = new List<GameObject>();
+
         int vbo_position;
         int vbo_color;
         int vbo_mview;
         int ibo_elements;
 
-        Vector3[] vertexData;
-        Vector3[] colorData;
-        int[] indiceData;
+        Vector3[] vertexData = new Vector3[0];
+        Vector3[] colorData = new Vector3[0];
+        int[] indiceData = new int[0];
 
         ShaderInfo shaderInfo;
 
@@ -52,43 +57,6 @@ namespace VoxelRPG.Engine.Graphics.Rendering
             shaderInfo.Uniform_modelview = GL.GetUniformLocation(shaderInfo.ShaderProgramID, "modelview");
 
             return shaderInfo;
-        }
-
-        public override void GatherData()
-        {
-            if (!IsChanged)
-                return;
-
-            List<Vector3> vertices = new List<Vector3>();
-            List<int> indices = new List<int>();
-            List<Vector3> colors = new List<Vector3>();
-
-            int vertcount = 0;
-
-            foreach (GameObject o in GetGameObjects())
-            {
-                Renderer r = (Renderer)o.GetComponent(ComponentType.Renderer);
-                if (r == null)
-                    continue;
-
-                Mesh m = r.mesh;
-                if (m == null)
-                    continue;
-
-                Debug.LogInfo(r.mesh.Transform.Position);
-
-                vertices.AddRange(m.GetVertices());
-                indices.AddRange(m.GetIndices(vertcount));
-                colors.AddRange(m.GetColors());
-                vertcount += m.VertexCount;
-            }
-
-            vertexData = vertices.ToArray();
-            indiceData = indices.ToArray();
-            colorData = colors.ToArray();
-            IsChanged = false;
-
-            Debug.LogInfo(string.Format("Recalculated Chunks. {0} vertices", vertices.Count.ToString()));
         }
 
         public override void BindBuffers()
@@ -137,6 +105,47 @@ namespace VoxelRPG.Engine.Graphics.Rendering
 
             GL.DisableVertexAttribArray(shaderInfo.Attribute_vertexPosition);
             GL.DisableVertexAttribArray(shaderInfo.Attribute_vertexColor);
+        }
+
+        public override void AddGameObject(GameObject[] newGameObjects)
+        {
+            gameObjects.AddRange(newGameObjects);
+
+            List<Vector3> vertices = vertexData.ToList();
+            List<int> indices = indiceData.ToList();
+            List<Vector3> colors = colorData.ToList();
+
+            int vertcount = vertexData.Length;
+
+            foreach (GameObject o in newGameObjects)
+            {
+                Renderer r = (Renderer)o.GetComponent(ComponentType.Renderer);
+                if (r == null)
+                    continue;
+
+                Mesh m = r.mesh;
+                if (m == null)
+                    continue;
+
+                vertices.AddRange(m.GetVertices());
+                indices.AddRange(m.GetIndices(vertcount));
+                colors.AddRange(m.GetColors());
+                vertcount += m.VertexCount;
+            }
+
+            vertexData = vertices.ToArray();
+            indiceData = indices.ToArray();
+            colorData = colors.ToArray();
+        }
+
+        public override void RemoveGameObject(GameObject[] o)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<GameObject> GetGameObjects()
+        {
+            return gameObjects;
         }
     }
 }

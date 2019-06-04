@@ -5,28 +5,13 @@ namespace VoxelRPG.Engine.Graphics.Rendering
 {
     public abstract class RenderBuffer
     {
-        List<GameObject> gameObjects = new List<GameObject>();
-        public bool IsChanged = false;
+        public abstract void BindBuffers();
+        public abstract void Render();
 
-        public virtual void GatherData() { }
-        public virtual void BindBuffers() { }
-        public virtual void Render() { }
+        public abstract void AddGameObject(GameObject[] o);
 
-        public void AddGameObject(GameObject o)
-        {
-            gameObjects.Add(o);
-            IsChanged = true;
-        }
+        public abstract void RemoveGameObject(GameObject[] o);
 
-        public void RemoveGameObject(GameObject o)
-        {
-            gameObjects.Remove(o);
-            IsChanged = true;
-        }
-
-        public List<GameObject> GetGameObjects()
-        {
-            return gameObjects;
-        }
+        public abstract List<GameObject> GetGameObjects();
     }
 }

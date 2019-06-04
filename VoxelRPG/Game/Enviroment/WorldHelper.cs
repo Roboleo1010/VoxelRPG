@@ -1,5 +1,4 @@
-﻿using System;
-using OpenTK;
+﻿using OpenTK;
 using VoxelRPG.Utilitys;
 
 namespace VoxelRPG.Game.Enviroment
@@ -14,7 +13,7 @@ namespace VoxelRPG.Game.Enviroment
             if (pos.X < 0)
                 cX--;
 
-            cY = (int)pos.Y / Constants.World.Chunk.Size;
+            cY = (int)pos.Y / Constants.World.Chunk.Height;
             if (pos.Y < 0)
                 cY--;
 
@@ -28,7 +27,7 @@ namespace VoxelRPG.Game.Enviroment
         public static Vector3Int ConvertFromChunkSpaceToWorldSpace(Vector3Int pos)
         {
             return new Vector3Int(pos.X * Constants.World.Chunk.Size,
-                                  pos.Y * Constants.World.Chunk.Size,
+                                  pos.Y * Constants.World.Chunk.Height,
                                   pos.Z * Constants.World.Chunk.Size);
         }
     }

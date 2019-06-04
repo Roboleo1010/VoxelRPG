@@ -115,8 +115,9 @@
     <Compile Include="Engine\Game\GameObject.cs" />
     <Compile Include="Game\Entity\Player.cs" />
     <Compile Include="Game\Enviroment\Voxel.cs" />
-    <Compile Include="Game\Generation\GeneratorUtility.cs" />
+    <Compile Include="Utilitys\MathUtility.cs" />
     <Compile Include="Game\Enviroment\World.cs" />
+    <Compile Include="Game\Generation\PoissonDiscSampling.cs" />
     <Compile Include="Game\Generation\WorldGenerator.cs" />
     <Compile Include="Engine\Graphics\Camera.cs" />
     <Compile Include="Game\Graphics\Meshes\VoxelMesh.cs" />

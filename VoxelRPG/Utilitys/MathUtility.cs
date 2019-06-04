@@ -1,6 +1,6 @@
-﻿namespace VoxelRPG.Game.Generation
+﻿namespace VoxelRPG.Utilitys
 {
-    public static class GeneratorUtility
+    public static class MathUtility
     {
         public static float Map(float newmin, float newmax, float origmin, float origmax, float value)
         {

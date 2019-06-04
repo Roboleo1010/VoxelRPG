@@ -9,9 +9,13 @@ namespace VoxelRPG.Game.Graphics.Meshes
 {
     public class VoxelMesh : Mesh
     {
-        public List<Vector3> vertices = new List<Vector3>();
-        public List<Vector3> colors = new List<Vector3>();
-        public List<int> indices = new List<int>();
+        List<Vector3> vertices = new List<Vector3>();
+        List<Vector3> colors = new List<Vector3>();
+        List<int> indices = new List<int>();
+
+        Vector3[] vertexData;
+        Vector3[] colorData;
+        int[] indiceData;
 
         Voxel[,,] voxels;
         bool ignoreNeighbourTransparency;
@@ -26,12 +30,12 @@ namespace VoxelRPG.Game.Graphics.Meshes
 
         public override Vector3[] GetVertices()
         {
-            return vertices.ToArray();
+            return vertexData;
         }
 
         public override int[] GetIndices(int offset = 0)
         {
-            int[] inds = indices.ToArray();
+            int[] inds = indiceData;
 
             if (offset != 0)
                 for (int i = 0; i < inds.Length; i++)
@@ -42,7 +46,7 @@ namespace VoxelRPG.Game.Graphics.Meshes
 
         public override Vector3[] GetColors()
         {
-            return colors.ToArray();
+            return colorData;
         }
 
         public override Matrix4 CalculateModelMatrix()
@@ -68,9 +72,17 @@ namespace VoxelRPG.Game.Graphics.Meshes
                     for (int z = 0; z < voxels.GetLength(2); z++)
                         GetMeshData(x, y, z, voxels[x, y, z]);
 
-            VertexCount = vertices.Count;
-            IndiceCount = indices.Count;
-            ColorCount = vertices.Count;
+            vertexData = vertices.ToArray();
+            colorData = colors.ToArray();
+            indiceData = indices.ToArray();
+
+            vertices = null;
+            colors = null;
+            indices = null;
+
+            VertexCount = vertexData.Length;
+            IndiceCount = indiceData.Length;
+            ColorCount = colorData.Length;
         }
 
         bool HasToRenderSide(int x, int y, int z)
@@ -85,6 +97,9 @@ namespace VoxelRPG.Game.Graphics.Meshes
 
         private void GetMeshData(int x, int y, int z, Voxel voxel)
         {
+            if (voxel == null)
+                return;
+
             bool renderFront = HasToRenderSide(x - 1, y, z);
             bool renderBack = HasToRenderSide(x + 1, y, z);
             bool renderLeft = HasToRenderSide(x, y, z - 1);
@@ -92,8 +107,8 @@ namespace VoxelRPG.Game.Graphics.Meshes
             bool renderTop = HasToRenderSide(x, y + 1, z);
             bool renderBottom = HasToRenderSide(x, y - 1, z);
 
-            if (voxel != null && (renderFront == true || renderBack == true || renderLeft == true ||
-                                          renderRight == true || renderTop == true || renderBottom == true))
+            if (renderFront == true || renderBack == true || renderLeft == true ||
+                renderRight == true || renderTop == true || renderBottom == true)
             {
                 int vOffset = vertices.Count;
 
@@ -109,15 +124,15 @@ namespace VoxelRPG.Game.Graphics.Meshes
                 vertices.Add(new Vector3(1f + x, 1f + y, 1f + z));
                 vertices.Add(new Vector3(0f + x, 1f + y, 1f + z));
 
-                for (int i = 0; i < 8; i++)
-                    colors.Add(voxel.Color);
+                colors.AddRange(new Vector3[] { voxel.Color, voxel.Color, voxel.Color, voxel.Color,
+                                                voxel.Color, voxel.Color, voxel.Color, voxel.Color });
 
                 if (renderFront)
                     indices.AddRange(new int[] { vOffset + 0, vOffset + 7, vOffset + 3, vOffset + 0, vOffset + 4, vOffset + 7 }); //front
                 if (renderBack)
                     indices.AddRange(new int[] { vOffset + 1, vOffset + 2, vOffset + 6, vOffset + 6, vOffset + 5, vOffset + 1 }); //back
                 if (renderLeft)
-                    indices.AddRange(new int[] { vOffset + 0, vOffset + 2, vOffset + 1, vOffset + 0, vOffset + 3, vOffset + 2 });  //left
+                    indices.AddRange(new int[] { vOffset + 0, vOffset + 2, vOffset + 1, vOffset + 0, vOffset + 3, vOffset + 2 }); //left
                 if (renderRight)
                     indices.AddRange(new int[] { vOffset + 4, vOffset + 5, vOffset + 6, vOffset + 6, vOffset + 7, vOffset + 4 }); //right
                 if (renderTop)
