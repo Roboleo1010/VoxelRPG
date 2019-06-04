@@ -2,16 +2,12 @@
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using VoxelRPG.Engine.Diagnosatics;
 using VoxelRPG.Engine.Game;
 using VoxelRPG.Engine.Game.Components;
 using VoxelRPG.Engine.Graphics.Meshes;
 using VoxelRPG.Engine.Shaders;
 using VoxelRPG.Game;
 using static VoxelRPG.Constants.Enums;
-using Debug = VoxelRPG.Engine.Diagnosatics.Debug;
 
 namespace VoxelRPG.Engine.Graphics.Rendering
 {
@@ -21,12 +17,19 @@ namespace VoxelRPG.Engine.Graphics.Rendering
 
         int vbo_position;
         int vbo_color;
+        int vbo_normal;
         int vbo_mview;
         int ibo_elements;
 
         Vector3[] vertexData = new Vector3[0];
         Vector3[] colorData = new Vector3[0];
+        Vector3[] normalData = new Vector3[0];
         int[] indiceData = new int[0];
+
+        List<Vector3> vertices = new List<Vector3>();
+        List<Vector3> colors = new List<Vector3>();
+        List<Vector3> normals = new List<Vector3>();
+        List<int> indices = new List<int>();
 
         ShaderInfo shaderInfo;
 
@@ -36,6 +39,7 @@ namespace VoxelRPG.Engine.Graphics.Rendering
 
             GL.GenBuffers(1, out vbo_position);
             GL.GenBuffers(1, out vbo_color);
+            GL.GenBuffers(1, out vbo_normal);
             GL.GenBuffers(1, out vbo_mview);
             GL.GenBuffers(1, out ibo_elements);
         }
@@ -54,6 +58,7 @@ namespace VoxelRPG.Engine.Graphics.Rendering
 
             shaderInfo.Attribute_vertexPosition = GL.GetAttribLocation(shaderInfo.ShaderProgramID, "vPosition");
             shaderInfo.Attribute_vertexColor = GL.GetAttribLocation(shaderInfo.ShaderProgramID, "vColor");
+            shaderInfo.Attribute_vertexNormal = GL.GetAttribLocation(shaderInfo.ShaderProgramID, "vNormal");
             shaderInfo.Uniform_modelview = GL.GetUniformLocation(shaderInfo.ShaderProgramID, "modelview");
 
             return shaderInfo;
@@ -69,6 +74,10 @@ namespace VoxelRPG.Engine.Graphics.Rendering
             GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(colorData.Length * Vector3.SizeInBytes), colorData, BufferUsageHint.StaticDraw);
             GL.VertexAttribPointer(shaderInfo.Attribute_vertexColor, 3, VertexAttribPointerType.Float, true, 0, 0);
 
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo_normal);
+            GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(normalData.Length * Vector3.SizeInBytes), normalData, BufferUsageHint.StaticDraw);
+            GL.VertexAttribPointer(shaderInfo.Attribute_vertexNormal, 3, VertexAttribPointerType.Float, false, 0, 0);
+
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ibo_elements);
             GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indiceData.Length * sizeof(int)), indiceData, BufferUsageHint.StaticDraw);
         }
@@ -79,6 +88,7 @@ namespace VoxelRPG.Engine.Graphics.Rendering
 
             GL.EnableVertexAttribArray(shaderInfo.Attribute_vertexPosition);
             GL.EnableVertexAttribArray(shaderInfo.Attribute_vertexColor);
+            GL.EnableVertexAttribArray(shaderInfo.Attribute_vertexNormal);
 
             int indiceAt = 0;
 
@@ -105,15 +115,12 @@ namespace VoxelRPG.Engine.Graphics.Rendering
 
             GL.DisableVertexAttribArray(shaderInfo.Attribute_vertexPosition);
             GL.DisableVertexAttribArray(shaderInfo.Attribute_vertexColor);
+            GL.DisableVertexAttribArray(shaderInfo.Attribute_vertexNormal);
         }
 
         public override void AddGameObject(GameObject[] newGameObjects)
         {
             gameObjects.AddRange(newGameObjects);
-
-            List<Vector3> vertices = vertexData.ToList();
-            List<int> indices = indiceData.ToList();
-            List<Vector3> colors = colorData.ToList();
 
             int vertcount = vertexData.Length;
 
@@ -128,14 +135,16 @@ namespace VoxelRPG.Engine.Graphics.Rendering
                     continue;
 
                 vertices.AddRange(m.GetVertices());
-                indices.AddRange(m.GetIndices(vertcount));
                 colors.AddRange(m.GetColors());
+                normals.AddRange(m.GetNormals());
+                indices.AddRange(m.GetIndices(vertcount));
                 vertcount += m.VertexCount;
             }
 
             vertexData = vertices.ToArray();
-            indiceData = indices.ToArray();
             colorData = colors.ToArray();
+            normalData = normals.ToArray();
+            indiceData = indices.ToArray();
         }
 
         public override void RemoveGameObject(GameObject[] o)

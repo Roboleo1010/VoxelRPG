@@ -8,6 +8,7 @@
 
         public int Attribute_vertexColor;
         public int Attribute_vertexPosition;
+        public int Attribute_vertexNormal;
         public int Uniform_modelview;
     }
 }

@@ -9,8 +9,9 @@ namespace VoxelRPG.Game.Graphics.Meshes
         public CubeMesh()
         {
             VertexCount = 8;
-            IndiceCount = 36;
             ColorCount = 8;
+            NormalCount = 8;
+            IndiceCount = 36;
         }
 
         public override Vector3[] GetVertices()
@@ -24,6 +25,34 @@ namespace VoxelRPG.Game.Graphics.Meshes
                 new Vector3(1, 0,  1),
                 new Vector3(1, 1,  1),
                 new Vector3(0, 1,  1),
+            };
+        }
+
+        public override Vector3[] GetColors()
+        {
+            return new Vector3[] {
+                new Vector3(1f, 0f, 0f),
+                new Vector3(0f, 0f, 1f),
+                new Vector3(0f, 1f, 0f),
+                new Vector3(1f, 0f, 0f),
+                new Vector3(0f, 0f, 1f),
+                new Vector3(0f, 1f, 0f),
+                new Vector3(1f, 0f, 0f),
+                new Vector3(0f, 0f, 1f)
+            };
+        }
+
+        public override Vector3[] GetNormals()
+        {
+            return new Vector3[] {
+               Vector3.UnitY,
+               Vector3.UnitY,
+               Vector3.UnitY,
+               Vector3.UnitY,
+               Vector3.UnitY,
+               Vector3.UnitY,
+               Vector3.UnitY,
+               Vector3.UnitY
             };
         }
 
@@ -55,20 +84,6 @@ namespace VoxelRPG.Game.Graphics.Meshes
                     inds[i] += offset;
 
             return inds;
-        }
-
-        public override Vector3[] GetColors()
-        {
-            return new Vector3[] {
-                new Vector3(1f, 0f, 0f),
-                new Vector3(0f, 0f, 1f),
-                new Vector3(0f, 1f, 0f),
-                new Vector3(1f, 0f, 0f),
-                new Vector3(0f, 0f, 1f),
-                new Vector3(0f, 1f, 0f),
-                new Vector3(1f, 0f, 0f),
-                new Vector3(0f, 0f, 1f)
-            };
         }
 
         public override Matrix4 CalculateModelMatrix()

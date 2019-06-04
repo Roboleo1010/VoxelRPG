@@ -11,10 +11,12 @@ namespace VoxelRPG.Game.Graphics.Meshes
     {
         List<Vector3> vertices = new List<Vector3>();
         List<Vector3> colors = new List<Vector3>();
+        List<Vector3> normals = new List<Vector3>();
         List<int> indices = new List<int>();
 
         Vector3[] vertexData;
         Vector3[] colorData;
+        Vector3[] normalData;
         int[] indiceData;
 
         Voxel[,,] voxels;
@@ -33,6 +35,16 @@ namespace VoxelRPG.Game.Graphics.Meshes
             return vertexData;
         }
 
+        public override Vector3[] GetColors()
+        {
+            return colorData;
+        }
+
+        public override Vector3[] GetNormals()
+        {
+            return normalData;
+        }
+
         public override int[] GetIndices(int offset = 0)
         {
             int[] inds = indiceData;
@@ -44,11 +56,6 @@ namespace VoxelRPG.Game.Graphics.Meshes
             return inds;
         }
 
-        public override Vector3[] GetColors()
-        {
-            return colorData;
-        }
-
         public override Matrix4 CalculateModelMatrix()
         {
             return Matrix4.CreateScale(Transform.Scale) * Matrix4.CreateRotationX(Transform.Rotation.X) * Matrix4.CreateRotationY(Transform.Rotation.Y) * Matrix4.CreateRotationZ(Transform.Rotation.Z) * Matrix4.CreateTranslation(Transform.Position);
@@ -58,11 +65,13 @@ namespace VoxelRPG.Game.Graphics.Meshes
         {
             vertices.AddRange(mesh.GetVertices());
             colors.AddRange(mesh.GetColors());
+            normals.AddRange(mesh.GetNormals());
             indices.AddRange(mesh.GetIndices());
 
             VertexCount = vertices.Count;
-            IndiceCount = indices.Count;
             ColorCount = vertices.Count;
+            NormalCount = normals.Count;
+            IndiceCount = indices.Count;
         }
 
         public void Build()
@@ -74,15 +83,18 @@ namespace VoxelRPG.Game.Graphics.Meshes
 
             vertexData = vertices.ToArray();
             colorData = colors.ToArray();
+            normalData = normals.ToArray();
             indiceData = indices.ToArray();
 
             vertices = null;
             colors = null;
+            normals = null;
             indices = null;
 
             VertexCount = vertexData.Length;
-            IndiceCount = indiceData.Length;
             ColorCount = colorData.Length;
+            NormalCount = normalData.Length;
+            IndiceCount = indiceData.Length;
         }
 
         bool HasToRenderSide(int x, int y, int z)
@@ -126,6 +138,9 @@ namespace VoxelRPG.Game.Graphics.Meshes
 
                 colors.AddRange(new Vector3[] { voxel.Color, voxel.Color, voxel.Color, voxel.Color,
                                                 voxel.Color, voxel.Color, voxel.Color, voxel.Color });
+
+                normals.AddRange(new Vector3[] { Vector3.UnitX, Vector3.UnitX, Vector3.UnitZ, Vector3.UnitZ,
+                                                 Vector3.UnitY,Vector3.UnitY,Vector3.UnitY,Vector3.UnitY});
 
                 if (renderFront)
                     indices.AddRange(new int[] { vOffset + 0, vOffset + 7, vOffset + 3, vOffset + 0, vOffset + 4, vOffset + 7 }); //front
