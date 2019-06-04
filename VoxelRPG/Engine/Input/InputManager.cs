@@ -1,5 +1,6 @@
 ﻿using OpenTK;
 using OpenTK.Input;
+using VoxelRPG.Engine.Diagnosatics;
 using VoxelRPG.Engine.Graphics;
 using VoxelRPG.Game;
 using VoxelRPG.Game.Entity;
@@ -54,6 +55,7 @@ namespace VoxelRPG.Input
                 }
                 if (Keyboard.GetState().IsKeyDown(Key.Escape))
                 {
+                    Debug.CSV.End("fps");
                     window.Exit();
                 }
             }

@@ -42,6 +42,7 @@ namespace VoxelRPG.Engine.Graphics
             GameManager.inputManager.ProcessInput(Focused);
             Title = RenderFrequency + "";
 
+            Debug.CSV.Add("fps", new string[] { GameManager.Time.ToString(), RenderFrequency.ToString() });
 
             GameManager.world.GenerateAround(GameManager.player.Transform.Position);
             GameManager.world.QueueGeneratedChunks();
@@ -87,6 +88,7 @@ namespace VoxelRPG.Engine.Graphics
         void InitGame()
         {
             Debug.Init();
+            Debug.CSV.Start("fps", new string[] { "Time", "FPS" });
 
             GameManager.window = this;
             GameManager.world = new World();
