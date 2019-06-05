@@ -1,42 +1,47 @@
-﻿using OpenTK;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using VoxelRPG.Engine.Game;
+using VoxelRPG.Game.Generation;
 using VoxelRPG.Utilitys;
 using static VoxelRPG.Constants.Enums;
 using Debug = VoxelRPG.Engine.Diagnosatics.Debug;
 
 namespace VoxelRPG.Game.Enviroment
 {
-    public class World
+    public class World : GameObject
     {
         public ConcurrentDictionary<Vector3Int, Chunk> chunks = new ConcurrentDictionary<Vector3Int, Chunk>();
         List<Vector3Int> currentlyGenerating = new List<Vector3Int>();
         List<Vector3Int> generatedButNotQueued = new List<Vector3Int>();
 
-        public World() { }
-
-        public void Init()
+        public void Start()
         {
-            GenerateChunkAt(WorldHelper.ConvertFromWorldSpaceToChunkSpace(GameManager.player.Transform.Position));
+            Instantiate("World", GameObjectType.EMPTY);
         }
 
-        public void GenerateChunkAt(Vector3Int position)
+        protected override void OnUpdateVirtual(float deltaTime)
         {
-            if (!currentlyGenerating.Contains(position) && !chunks.ContainsKey(position))
-            {
-                currentlyGenerating.Add(position);
+            GenerateAround(WorldHelper.ConvertFromWorldSpaceToChunkSpace(GameManager.Player.Transform.Position));
+            QueueGeneratedChunks();
+        }
 
-                ThreadStart starter = new ChunkGenerationThread(position).DoWork;
+        public void GenerateChunkAt(Vector3Int posInChunkSpace)
+        {
+            if (!currentlyGenerating.Contains(posInChunkSpace) && !chunks.ContainsKey(posInChunkSpace))
+            {
+                currentlyGenerating.Add(posInChunkSpace);
+
+                ThreadStart starter = new ChunkGenerationThread(posInChunkSpace).DoWork;
                 starter += () =>
                 {
-                    currentlyGenerating.Remove(position);
-                    generatedButNotQueued.Add(position);
+                    currentlyGenerating.Remove(posInChunkSpace);
+                    generatedButNotQueued.Add(posInChunkSpace);
                 };
 
                 Thread thread = new Thread(starter)
                 {
-                    Name = "Generate Chunk: " + position.ToString(),
+                    Name = "Generate Chunk: " + posInChunkSpace.ToString(),
                     IsBackground = true
                 };
 
@@ -50,62 +55,23 @@ namespace VoxelRPG.Game.Enviroment
 
             if (generatedButNotQueued.Count > 0)
             {
-                Vector3Int pos = generatedButNotQueued[0];
+                Vector3Int posInChunkSpace = generatedButNotQueued[0];
 
-                if (chunks.TryGetValue(pos, out chunk))
-                    chunk.Queue();
+                if (chunks.TryGetValue(posInChunkSpace, out chunk))
+                    chunk.Render();
                 else
-                    Debug.LogError("Cound not generate Chunk " + pos.ToString());
+                    Debug.LogError("Cound not generate Chunk " + posInChunkSpace.ToString());
 
-                generatedButNotQueued.Remove(pos);
+                generatedButNotQueued.Remove(posInChunkSpace);
             }
         }
 
-        public void GenerateAround(Vector3 pos)
+        public void GenerateAround(Vector3Int posInChunkSpace)
         {
-            Vector3Int chunkPos = WorldHelper.ConvertFromWorldSpaceToChunkSpace(pos);
-            //
             int radius = 2;
             for (int x = -radius; x < radius; x++)
                 for (int z = -radius; z < radius; z++)
-                    // if ((Math.Pow(x - chunkPos.X, 2) + Math.Pow(z - chunkPos.Z, 2)) < Math.Pow(radius, 2))  //Check if point is in circle: (x - center_x)^2 + (y - center_y)^2 < radius^2
-                    GenerateChunkAt(new Vector3Int(chunkPos.X + x, 0, chunkPos.Z + z));
-        }
-
-        public Chunk GetChunkFromWorldSpace(Vector3 pos)
-        {
-            chunks.TryGetValue(WorldHelper.ConvertFromWorldSpaceToChunkSpace(pos), out Chunk c);
-            return c;
-        }
-
-        public Chunk GetChunkFromChunkSpace(Vector3Int pos)
-        {
-            chunks.TryGetValue(pos, out Chunk c);
-            return c;
-        }
-    }
-
-    public class ChunkGenerationThread
-    {
-        Vector3Int position;
-
-        public ChunkGenerationThread(Vector3Int pos)
-        {
-            position = pos;
-        }
-
-        public void DoWork()
-        {
-            Chunk chunk = new Chunk(position)
-            {
-                Type = GameObjectType.ENVIROMENT,
-                Name = "Chunk: " + position.ToString()
-            };
-
-            chunk.Generate();
-            chunk.Build();
-
-            GameManager.world.chunks.TryAdd(position, chunk);
+                    GenerateChunkAt(new Vector3Int(posInChunkSpace.X + x, 0, posInChunkSpace.Z + z));
         }
     }
 }

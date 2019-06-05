@@ -1,7 +1,6 @@
 ﻿using OpenTK;
 using System;
 using System.Collections.Generic;
-using VoxelRPG.Engine.Diagnosatics;
 using System.Diagnostics;
 using VoxelRPG.Engine.Manager.Models;
 using VoxelRPG.Game.Enviroment;
@@ -33,7 +32,7 @@ namespace VoxelRPG.Game.Generation
             colorNoise.SetFrequency(0.05f); // größer = steiler, kleiner = flacher
         }
 
-        public Voxel[,,] Generate()
+        public void Generate()
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -44,8 +43,21 @@ namespace VoxelRPG.Game.Generation
 
             sw.Stop();
             Debug.LogInfo("Generated in " + sw.ElapsedMilliseconds);
+        }
 
+        public Voxel[,,] GetVoxels()
+        {
             return voxels;
+        }
+
+        public Voxel GetVoxel(Vector3Int pos)
+        {
+            return voxels[pos.X, pos.Y, pos.Z];
+        }
+
+        public Voxel GetVoxel(int x, int y, int z)
+        {
+            return voxels[x, y, z];
         }
 
         void GetHeightData()
@@ -88,18 +100,23 @@ namespace VoxelRPG.Game.Generation
                         Vector3Int posInChunk = new Vector3Int(x, y, z);
                         Vector3Int posInWorld = new Vector3Int(chunkPosition.X + x, chunkPosition.Y + y, chunkPosition.Z + z);
                         if (posInWorld.Y <= height[x, z])
-                            voxels[posInChunk.X, posInChunk.Y, posInChunk.Z] = new Voxel(posInWorld, GetGroundColor(posInWorld));
+                            voxels[posInChunk.X, posInChunk.Y, posInChunk.Z] = new Voxel(posInWorld, GetGroundColor(posInWorld, posInChunk));
                     }
         }
 
-        Vector3 GetGroundColor(Vector3Int posInWorld)
+        Vector3 GetGroundColor(Vector3Int posInWorld, Vector3Int posInChunk)
         {
             Vector3 color;
 
-            if (posInWorld.Y > 170)
-                color = Constants.World.Chunk.Colors.Snow;
-            else if (posInWorld.Y > 60)
-                color = Constants.World.Chunk.Colors.Grass;
+            if (posInWorld.Y == height[posInChunk.X, posInChunk.Z])
+            {
+                if (posInWorld.Y > 165)
+                    color = Constants.World.Chunk.Colors.Snow;
+                else
+                    color = Constants.World.Chunk.Colors.Grass;
+            }
+            else if (posInWorld.Y > 40)
+                color = Constants.World.Chunk.Colors.Dirt;
             else
                 color = Constants.World.Chunk.Colors.Stone;
 

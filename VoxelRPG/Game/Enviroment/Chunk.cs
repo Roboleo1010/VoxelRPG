@@ -10,25 +10,28 @@ namespace VoxelRPG.Game.Enviroment
 {
     public class Chunk : GameObject
     {
-        Voxel[,,] voxels = new Voxel[Constants.World.Chunk.Size, Constants.World.Chunk.Height, Constants.World.Chunk.Size];
+        WorldGenerator generator;
+        Vector3Int chunkPos;
+
         public bool IsEmpty = false; //TODO
         public VoxelMesh mesh;
 
         public Chunk(Vector3Int pos)
         {
+            chunkPos = pos;
             Vector3Int chunkWorldPos = WorldHelper.ConvertFromChunkSpaceToWorldSpace(pos);
             Transform.Position = new Vector3(chunkWorldPos.X, chunkWorldPos.Y, chunkWorldPos.Z);
+            generator = new WorldGenerator(Transform.RoundedPosition);
         }
 
         public void Generate()
         {
-            WorldGenerator generator = new WorldGenerator(Transform.RoundedPosition);
-            voxels = generator.Generate();
+            generator.Generate();
         }
 
         public void Build()
         {
-            mesh = new VoxelMesh(voxels);
+            mesh = new VoxelMesh(generator.GetVoxels());
             mesh.Transform = this.Transform;
             mesh.Build();
 
@@ -36,10 +39,10 @@ namespace VoxelRPG.Game.Enviroment
             renderer.mesh = mesh;
         }
 
-        public void Queue()
+        public void Render()
         {
             if (!IsEmpty)
-                GameManager.window.AddGameObject(this);
+                Instantiate(chunkPos.ToString(), GameObjectType.ENVIROMENT);
         }
 
         public Voxel GetVoxel(Vector3Int pos)
@@ -49,7 +52,12 @@ namespace VoxelRPG.Game.Enviroment
                 pos.Y > Constants.World.Chunk.Height ||
                 pos.Z > Constants.World.Chunk.Size)
                 return null;
-            return voxels[pos.X, pos.Y, pos.Z];
+            return generator.GetVoxel(pos);
+        }
+
+        public Voxel GetVoxel(int x, int y, int z)
+        {
+            return generator.GetVoxel(x, y, z);
         }
     }
 }

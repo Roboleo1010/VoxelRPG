@@ -1,5 +1,4 @@
-﻿using System;
-using VoxelRPG.Engine.Game;
+﻿using VoxelRPG.Engine.Game;
 using VoxelRPG.Engine.Game.Components;
 using VoxelRPG.Game.Enviroment;
 using VoxelRPG.Utilitys;
@@ -18,14 +17,28 @@ namespace VoxelRPG.Game.Entity
             Rigidbody = (Rigidbody)AddComponent<Rigidbody>(ComponentType.Rigidbody);
         }
 
-        //public Chunk GetCurrentChunk() TODO
+        //public Chunk GetCurrentChunk()
         //{
-        //    return GameManager.world.GetChunkFromWorldSpace(Transform.Position);
+        //    return GameManager.World.GetChunkFromChunkSpace(new Vector3Int(
+        //        Transform.RoundedPosition.X / Constants.World.Chunk.Size,
+        //        Transform.RoundedPosition.Y / Constants.World.Chunk.Height,
+        //        Transform.RoundedPosition.Z / Constants.World.Chunk.Size));
         //}
 
-        //public Voxel GetCurrentVoxel() TODO
+        //public Voxel GetCurrentVoxel()
         //{
-        //    throw new NotImplementedException();
+        //    //player Pos
+        //    int pX = Transform.RoundedPosition.X;
+        //    int pY = Transform.RoundedPosition.Y;
+        //    int pZ = Transform.RoundedPosition.Z;
+
+        //    //Chunk pos in chunk Space
+        //    int cX = pX / Constants.World.Chunk.Size;
+        //    int cY = pY / Constants.World.Chunk.Height;
+        //    int cZ = pZ / Constants.World.Chunk.Size;
+            
+
+        //    return null;
         //}
     }
 }

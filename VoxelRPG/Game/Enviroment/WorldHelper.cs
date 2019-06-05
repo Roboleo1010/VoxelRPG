@@ -24,6 +24,11 @@ namespace VoxelRPG.Game.Enviroment
             return new Vector3Int(cX, cY, cZ);
         }
 
+        public static Vector3Int ConvertFromWorldSpaceToChunkSpace(Vector3Int pos)
+        {
+            return ConvertFromWorldSpaceToChunkSpace(pos.ToVector3());
+        }
+
         public static Vector3Int ConvertFromChunkSpaceToWorldSpace(Vector3Int pos)
         {
             return new Vector3Int(pos.X * Constants.World.Chunk.Size,

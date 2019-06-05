@@ -21,6 +21,7 @@ namespace VoxelRPG
                     public static Vector3 Grass = new Vector3(0.02f, 0.48f, 0.05f);
                     public static Vector3 Stone = new Vector3(0.57f, 0.57f, 0.57f);
                     public static Vector3 Snow = new Vector3(0.8f, 0.8f, 0.8f);
+                    public static Vector3 Dirt = new Vector3(0.5882f, 0.3843f, 0.2705f);
                 }
             }
         }
@@ -33,7 +34,7 @@ namespace VoxelRPG
             }
             public enum GameObjectType
             {
-                ENVIROMENT, DEBUG
+                ENVIROMENT, ENTITY, EMPTY
             }
         }
     }

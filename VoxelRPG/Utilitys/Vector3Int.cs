@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using OpenTK;
 
 namespace VoxelRPG.Utilitys
@@ -36,6 +37,11 @@ namespace VoxelRPG.Utilitys
         public override string ToString()
         {
             return string.Format("X:{0} Y:{1} Z:{2}", X, Y, Z);
+        }
+
+        public Vector3 ToVector3()
+        {
+            return new Vector3(X, Y, Z);
         }
     }
 }

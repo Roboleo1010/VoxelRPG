@@ -103,9 +103,9 @@ namespace VoxelRPG.Engine.Graphics.Rendering
                     continue;
 
                 //da sich die Kamera ändern kann, muss die Viewmatrix geupdated werden
-                Matrix4 ModelViewProjectionMatrix = m.CalculateModelMatrix() * GameManager.player.camera.GetViewMatrix() *
+                Matrix4 ModelViewProjectionMatrix = m.CalculateModelMatrix() * GameManager.Player.camera.GetViewMatrix() *
                                                     Matrix4.CreatePerspectiveFieldOfView(1.3f,
-                                                    GameManager.window.ClientSize.Width / (float)GameManager.window.ClientSize.Height,
+                                                    GameManager.Window.ClientSize.Width / (float)GameManager.Window.ClientSize.Height,
                                                     Constants.Camera.NearClippingPane, Constants.Camera.FarClippingPane);
 
                 GL.UniformMatrix4(shaderInfo.Uniform_modelview, false, ref ModelViewProjectionMatrix);

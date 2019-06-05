@@ -12,35 +12,37 @@ namespace VoxelRPG.Engine.Game
     {
         public static GameObject Cube(Vector3 pos, Vector3 rot, Vector3 scale)
         {
-            GameObject gameObject = new GameObject();
-            gameObject.Type = GameObjectType.ENVIROMENT;
-            gameObject.Transform.Position = pos;
-            gameObject.Transform.Rotation = rot;
-            gameObject.Transform.Scale = scale;
-            Renderer r = (Renderer)gameObject.AddComponent<Renderer>(ComponentType.Renderer);
+            GameObject g = new GameObject();
+            g.Transform.Position = pos;
+            g.Transform.Rotation = rot;
+            g.Transform.Scale = scale;
+            Renderer r = (Renderer)g.AddComponent<Renderer>(ComponentType.Renderer);
             r.mesh = new CubeMesh();
-            r.mesh.Transform = gameObject.Transform;
+            r.mesh.Transform = g.Transform;
 
-            return gameObject;
+            g.Instantiate("Cube", GameObjectType.ENVIROMENT);
+
+            return g;
         }
 
         public static GameObject Model(Vector3 pos, Vector3 rot, Vector3 scale, string name)
         {
             Model model = ModelManager.models[name];
 
-            GameObject gameObject = new GameObject();
-            gameObject.Type = GameObjectType.ENVIROMENT;
-            gameObject.Transform.Position = pos;
-            gameObject.Transform.Rotation = rot;
-            gameObject.Transform.Scale = scale;
-            Renderer r = (Renderer)gameObject.AddComponent<Renderer>(ComponentType.Renderer);
+            GameObject g = new GameObject();
+            g.Transform.Position = pos;
+            g.Transform.Rotation = rot;
+            g.Transform.Scale = scale;
+            Renderer r = (Renderer)g.AddComponent<Renderer>(ComponentType.Renderer);
 
             Mesh mesh = new VoxelMesh();
             mesh.Copy(model.mesh);
-            mesh.Transform = gameObject.Transform;
+            mesh.Transform = g.Transform;
             r.mesh = mesh;
 
-            return gameObject;
+            g.Instantiate(name, GameObjectType.ENVIROMENT);
+
+            return g;
         }
     }
 }

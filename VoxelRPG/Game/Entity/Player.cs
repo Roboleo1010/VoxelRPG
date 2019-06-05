@@ -1,9 +1,8 @@
 ﻿using OpenTK;
 using System;
-using VoxelRPG.Engine.Diagnosatics;
 using VoxelRPG.Engine.Game.Components;
 using VoxelRPG.Engine.Graphics;
-using VoxelRPG.Game.Enviroment;
+using static VoxelRPG.Constants.Enums;
 
 namespace VoxelRPG.Game.Entity
 {
@@ -14,10 +13,11 @@ namespace VoxelRPG.Game.Entity
         float moveSpeed = 0.5f;
         float mouseSensitivity = 0.0025f;
 
-        public Player()
+        public Player(Vector3 pos)
         {
+            Transform.Position = pos;
             camera = new Camera(this);
-            // Rigidbody.SetForce(new Vector3(0, 1, 0));
+            Instantiate("Player", GameObjectType.ENTITY);
         }
 
         public void Move(float x, float y, float z)

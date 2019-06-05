@@ -115,6 +115,7 @@
     <Compile Include="Engine\Game\GameObject.cs" />
     <Compile Include="Game\Entity\Player.cs" />
     <Compile Include="Game\Enviroment\Voxel.cs" />
+    <Compile Include="Game\Generation\ChunkGenerationThread.cs" />
     <Compile Include="Utilitys\MathUtility.cs" />
     <Compile Include="Game\Enviroment\World.cs" />
     <Compile Include="Game\Generation\PoissonDiscSampling.cs" />

@@ -10,7 +10,7 @@ namespace VoxelRPG.Engine.Manager.Models
     {
         public static Dictionary<string, Model> models = new Dictionary<string, Model>();
 
-        public static void Init()
+        public static void Start()
         {
             foreach (string file in FileUtility.GetAllFilesOfType(string.Format("GameData/Models/"), "*.json"))
                 LoadFileData(file);

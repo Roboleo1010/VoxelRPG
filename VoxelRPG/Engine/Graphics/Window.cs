@@ -3,17 +3,12 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using VoxelRPG.Engine.Diagnosatics;
 using VoxelRPG.Engine.Game;
 using VoxelRPG.Engine.Graphics.Rendering;
-using VoxelRPG.Engine.Manager.Models;
 using VoxelRPG.Game;
-using VoxelRPG.Game.Entity;
-using VoxelRPG.Game.Enviroment;
-using VoxelRPG.Game.Generation;
-using VoxelRPG.Input;
-using VoxelRPG.Utilitys;
 using static VoxelRPG.Constants.Enums;
 
 namespace VoxelRPG.Engine.Graphics
@@ -21,6 +16,7 @@ namespace VoxelRPG.Engine.Graphics
     public class Window : GameWindow
     {
         ChunkRenderBuffer chunkBuffer;
+        List<GameObject> gameObjects = new List<GameObject>();
 
         public Window() : base(1024, 724, new GraphicsMode(32, 24, 0, 4))
         { }
@@ -29,9 +25,12 @@ namespace VoxelRPG.Engine.Graphics
         {
             base.OnLoad(e);
 
-            InitGraphics();
+            GL.ClearColor(Color.CornflowerBlue);
+            GL.PointSize(8f);
+            CursorVisible = false;
+
             chunkBuffer = new ChunkRenderBuffer();
-            InitGame();
+            GameManager.Start(this);
         }
 
         //Update physics
@@ -40,16 +39,16 @@ namespace VoxelRPG.Engine.Graphics
             base.OnUpdateFrame(e);
 
             GameManager.Time += (float)e.Time;
-            GameManager.inputManager.ProcessInput(Focused);
+            GameManager.InputManager.ProcessInput(Focused);
             Title = RenderFrequency + "";
 
             Debug.CSV.Add("fps", new string[] { GameManager.Time.ToString(), RenderFrequency.ToString() });
 
-            GameManager.world.GenerateAround(GameManager.player.Transform.Position);
-            GameManager.world.QueueGeneratedChunks();
-
             //Update all GameObjects
             foreach (GameObject g in chunkBuffer.GetGameObjects())
+                g.OnUpdate(GameManager.Time - (float)e.Time);
+
+            foreach (GameObject g in gameObjects)
                 g.OnUpdate(GameManager.Time - (float)e.Time);
         }
 
@@ -83,43 +82,20 @@ namespace VoxelRPG.Engine.Graphics
         protected override void OnFocusedChanged(EventArgs e)
         {
             base.OnFocusedChanged(e);
-            GameManager.inputManager.lastMousePos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
-        }
-
-        void InitGame()
-        {
-            Debug.Init();
-            Debug.CSV.Start("fps", new string[] { "Time", "FPS" });
-
-            GameManager.window = this;
-            GameManager.world = new World();
-            Player player = new Player();
-
-            WorldGenerator generator = new WorldGenerator(new Vector3Int(0, 0, 0));
-            player.Transform.Position = new Vector3(0, generator.GetHeight(0, 0) + 3, 0);
-            GameManager.player = player;
-            GameManager.inputManager = new InputManager(this, player);
-            ModelManager.Init();
-
-            GameManager.Seed = new Random().Next(int.MinValue, int.MaxValue);
-
-            GameManager.world.Init();
-        }
-
-        void InitGraphics()
-        {
-            GL.ClearColor(Color.CornflowerBlue);
-            GL.PointSize(8f);
-            CursorVisible = false;
+            GameManager.InputManager.lastMousePos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
         }
 
         #region GameObject management
-        public void AddGameObject(GameObject o)
+        public void AddGameObject(GameObject g)
         {
-            switch (o.Type)
+            switch (g.Type)
             {
                 case GameObjectType.ENVIROMENT:
-                    chunkBuffer.AddGameObject(new GameObject[] { o });
+                case GameObjectType.ENTITY:
+                    chunkBuffer.AddGameObject(new GameObject[] { g });
+                    break;
+                case GameObjectType.EMPTY:
+                    gameObjects.Add(g);
                     break;
                 default:
                     Debug.LogError("Object type not known");
@@ -127,12 +103,15 @@ namespace VoxelRPG.Engine.Graphics
             }
         }
 
-        public void RemoveGameObject(GameObject o)
+        public void RemoveGameObject(GameObject g)
         {
-            switch (o.Type)
+            switch (g.Type)
             {
                 case GameObjectType.ENVIROMENT:
-                    chunkBuffer.RemoveGameObject(new GameObject[] { o });
+                    chunkBuffer.RemoveGameObject(new GameObject[] { g });
+                    break;
+                case GameObjectType.EMPTY:
+                    gameObjects.Remove(g);
                     break;
                 default:
                     Debug.LogError("Object type not known");

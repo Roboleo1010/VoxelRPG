@@ -19,9 +19,16 @@ namespace VoxelRPG.Engine.Game
 
         public GameObject()
         {
-            Name = string.Empty;
             components = new Component[Enum.GetNames(typeof(ComponentType)).Length];
             Transform = (Transform)AddComponent<Transform>(ComponentType.Transform);
+        }
+
+        public void Instantiate(string name, GameObjectType type)
+        {
+            Type = type;
+            Name = name;
+
+            GameManager.Window.AddGameObject(this);
         }
 
         public void SetActive(bool newState)
@@ -55,7 +62,7 @@ namespace VoxelRPG.Engine.Game
         {
             DestroyVirtual();
 
-            GameManager.window.RemoveGameObject(this);
+            GameManager.Window.RemoveGameObject(this);
         }
 
         protected virtual void DestroyVirtual()
